@@ -1,0 +1,15 @@
+html,
+body,
+#__next {
+  background-color: rgb(20, 20, 20);
+  color: white;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  font-family: kiona;
+}
+
+select,
+input {
+  box-sizing: border-box;
+}

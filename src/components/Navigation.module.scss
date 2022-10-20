@@ -1,0 +1,53 @@
+.tabs {
+  display: flex;
+  font-family: kiona;
+  justify-content: space-around;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background-color: black;
+}
+
+.tab {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  top: 13px;
+
+  &:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    top: 20px;
+    left: 0;
+    transition: transform 0.25s ease-out;
+    background-color: white;
+    border: 2px solid white;
+
+    outline: none;
+    border-color: red;
+    box-shadow: 0 0 10px red;
+  }
+
+  &:hover:after {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes underline {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}

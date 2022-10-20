@@ -1,0 +1,32 @@
+.tiles {
+  display: grid;
+  height: calc(100vh - 1px);
+  width: calc(100vw - 1px);
+}
+
+.title {
+  font-size: 72px;
+  font-family: "kiona";
+  opacity: 0;
+  animation: fade 1500ms;
+  animation-delay: 200ms;
+
+  @keyframes fade {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
+.centered {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

@@ -1,0 +1,21 @@
+.container {
+  display: grid;
+  gap: 10px;
+}
+
+.input {
+  background-color: rgb(50, 50, 50);
+  outline: none;
+  border: 1px solid cyan;
+  width: 20rem;
+  height: 2.75rem;
+  font-size: 21px;
+  color: white;
+  padding: 0;
+  padding-left: 5px;
+  font-family: kiona;
+}
+
+.label {
+  font-size: 21px;
+}

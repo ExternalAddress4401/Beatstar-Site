@@ -1,0 +1,27 @@
+{
+  "name": "beatstar",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "animejs": "^3.2.1",
+    "classnames": "^2.3.2",
+    "next": "12.3.1",
+    "react": "18.2.0",
+    "react-anime": "^4.1.1",
+    "react-dom": "18.2.0",
+    "sass": "^1.55.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.2",
+    "@types/react": "18.0.21",
+    "eslint": "8.25.0",
+    "eslint-config-next": "12.3.1",
+    "typescript": "4.8.4"
+  }
+}

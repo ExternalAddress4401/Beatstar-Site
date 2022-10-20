@@ -1,0 +1,17 @@
+.container {
+  display: grid;
+  gap: 10px;
+}
+
+.select {
+  width: 20rem;
+  height: 2.75rem;
+  background-color: rgb(50, 50, 50);
+  color: white;
+  border: 1px solid cyan;
+  font-size: 21px;
+}
+
+.label {
+  font-size: 21px;
+}
