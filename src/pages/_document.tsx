@@ -12,7 +12,7 @@ export default function Document() {
         <link href="http://fonts.cdnfonts.com/css/kiona-2" rel="stylesheet" />
         <script
           src="https://kit.fontawesome.com/b1fc6d01cf.js"
-          crossorigin="anonymous"
+          crossOrigin="anonymous"
         ></script>
       </Head>
       <body>

@@ -1,0 +1,20 @@
+.selector {
+  position: absolute;
+  width: 305px;
+  height: 305px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.test {
+  border-radius: 50%;
+  width: 308px;
+  height: 312px;
+}

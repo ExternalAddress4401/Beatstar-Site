@@ -1,0 +1,16 @@
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.group {
+  position: relative;
+}
+
+.image {
+  width: 321px;
+  height: 531px;
+}

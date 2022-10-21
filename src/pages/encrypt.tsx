@@ -5,6 +5,7 @@ import Button from "../components/Button";
 import { getRandomBetween } from "../utils/getRandomBetween";
 import { useState } from "react";
 import FileUploadButton from "../components/FileUploadButton";
+import { readChart } from "../lib/ChartReader";
 
 interface UploadProps {
   name: string;
@@ -14,6 +15,23 @@ interface UploadProps {
 export default function Encrypt() {
   const [chart, setChart] = useState<UploadProps | null>(null);
   const [id, setId] = useState(getRandomBetween(2000, 10000));
+
+  const openFileDialog = (type: "chart" | "audio" | "artwork") => {
+    let input = document.createElement("input");
+    input.type = "file";
+    input.onchange = function (event) {
+      const file = input.files[0];
+      switch (type) {
+        case "chart":
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            readChart(reader.result.toString());
+          });
+          reader.readAsText(file);
+      }
+    };
+    input.click();
+  };
 
   return (
     <div className={styles.content}>
@@ -25,7 +43,7 @@ export default function Encrypt() {
       </div>
 
       <div className={styles.group}>
-        <FileUploadButton label="Chart" onUpload={() => null} />
+        <Button label="Chart" onClick={() => openFileDialog("chart")} />
         <Button label="Audio" />
         <Button label="Artwork" />
       </div>
