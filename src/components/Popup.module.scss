@@ -1,0 +1,14 @@
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30rem;
+  border-radius: 5rem;
+  background-color: #555;
+  min-height: 30rem;
+}
+
+.content {
+  margin-left: 2rem;
+}
