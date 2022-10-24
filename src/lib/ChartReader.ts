@@ -21,11 +21,18 @@ interface BPM {
   change: number;
 }
 
+interface Size {
+  offset: number;
+  multiplier: number;
+}
+
 export interface Chart {
   info: Info;
   syncTrack: Array<TimeSignature | BPM>;
   sections: number[];
   notes: Note[];
+  perfectSizes: Size[];
+  speeds: Size[];
   errors: string[];
 }
 
@@ -57,6 +64,8 @@ export function readChart(chart: string) {
     syncTrack: [],
     sections: [],
     notes: [],
+    perfectSizes: [],
+    speeds: [],
     errors: [],
   };
 
@@ -130,5 +139,64 @@ export function readChart(chart: string) {
         break;
     }
   }
+  return parsedChart;
+}
+
+export function readBytes(json: any) {
+  const resolution = 192;
+
+  const parsedChart: Chart = {
+    info: {
+      resolution: 192,
+    },
+    syncTrack: [],
+    sections: json.sections.map((section) =>
+      Math.round(section.offset * resolution)
+    ),
+    perfectSizes: json.perfects.map((size: Size) => {
+      return {
+        offset: size.offset ? Math.round(size.offset * 192) : 0,
+        multiplier: size.multiplier,
+      };
+    }),
+    speeds: json.speeds.map((speed: Size) => {
+      return {
+        offset: speed.offset ? Math.round(speed.offset * 192) : 0,
+        multiplier: speed.multiplier,
+      };
+    }),
+    notes: [],
+    errors: [],
+  };
+
+  const directions: Direction[] = ["u", "d", "l", "r"];
+
+  for (const note of json.notes) {
+    if (note.note_type === 1) {
+      const offset = Math.round(note.single.note.offset * resolution);
+      const lane = note.single.note.lane - 1;
+
+      parsedChart.notes.push({
+        offset,
+        lane,
+        length: 0,
+        swipe: note.single.swipe ? directions[note.single.swipe - 1] : null,
+      });
+    } else if (note.note_type === 2) {
+      const offset = Math.round(note.long.note[0].offset * resolution);
+      const lane = note.long.note[0].lane - 1;
+      const length = Math.round(
+        (note.long.note[1].offset - note.long.note[0].offset) * resolution
+      );
+
+      parsedChart.notes.push({
+        offset,
+        lane,
+        length,
+        swipe: note.long.swipe ? directions[note.long.swipe - 1] : null,
+      });
+    }
+  }
+
   return parsedChart;
 }

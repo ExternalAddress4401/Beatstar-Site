@@ -8,12 +8,7 @@ import { Chart, readChart } from "../lib/ChartReader";
 import { readFile } from "../utils/readFile";
 import { isPng } from "../utils/isPng";
 import Footer from "../components/Footer";
-
-interface UploadProps {
-  name?: string;
-  data?: Chart | ArrayBuffer;
-  icon: "circle-question" | "x" | "check";
-}
+import UploadProps from "../interfaces/UploadProps";
 
 export default function Encrypt() {
   const [chart, setChart] = useState<UploadProps | null>({
@@ -25,7 +20,7 @@ export default function Encrypt() {
   const [artwork, setArtwork] = useState<UploadProps>({
     icon: "circle-question",
   });
-  const [id, setId] = useState(getRandomBetween(2000, 10000));
+  const [id, setId] = useState<number>(getRandomBetween(2000, 10000));
   const [errors, setErrors] = useState<string[] | null>(null);
 
   const openFileDialog = (
@@ -88,9 +83,14 @@ export default function Encrypt() {
   return (
     <div className={styles.content}>
       <div className={styles.group}>
-        <Input label="Title" />
-        <Input label="Artist" />
-        <Input label="ID" value={id} />
+        <Input label="Title" type="text" />
+        <Input label="Artist" type="text" />
+        <Input
+          label="ID"
+          type="number"
+          value={id}
+          onChange={(e) => setId(parseInt(e.currentTarget.value))}
+        />
         <Select label="Difficulty" />
       </div>
 

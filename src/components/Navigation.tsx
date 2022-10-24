@@ -13,7 +13,9 @@ export default function Navigation() {
       <div className={styles.tab}>Decrypt</div>
       <div className={styles.tab}>Leaderboard</div>
       <div className={styles.tab}>News</div>
-      <div className={styles.tab}>CMS</div>
+      <Link href="/cms">
+        <div className={styles.tab}>CMS</div>
+      </Link>
     </div>
   );
 }

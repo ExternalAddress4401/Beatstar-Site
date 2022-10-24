@@ -1,12 +1,15 @@
 import styles from "./Footer.module.scss";
 
 interface FooterProps {
-  errors: string[];
+  errors: string | string[];
 }
 
 export default function Footer({ errors }: FooterProps) {
   if (!errors) {
     return;
+  }
+  if (!Array.isArray(errors)) {
+    errors = [errors];
   }
   return (
     <div className={styles.footer}>

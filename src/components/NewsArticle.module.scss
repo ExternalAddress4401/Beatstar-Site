@@ -1,0 +1,16 @@
+//images are max 512x512 so the article should be a big larger to account for borders
+
+.article {
+  width: 545px;
+  height: 545px;
+  background-color: rgb(11, 33, 54);
+  font-family: ArabotoNormal;
+
+  h2 {
+    margin-left: 1rem;
+  }
+}
+
+.content {
+  margin-left: 1rem;
+}
