@@ -10,9 +10,15 @@ export default function Navigation() {
       <Link href="/encrypt">
         <div className={styles.tab}>Encrypt</div>
       </Link>
-      <div className={styles.tab}>Decrypt</div>
-      <div className={styles.tab}>Leaderboard</div>
-      <div className={styles.tab}>News</div>
+      <Link href="/decrypt">
+        <div className={styles.tab}>Decrypt</div>
+      </Link>
+      <Link href="/leaderboard">
+        <div className={styles.tab}>Leaderboard</div>
+      </Link>
+      <Link href="/news">
+        <div className={styles.tab}>News</div>
+      </Link>
       <Link href="/cms">
         <div className={styles.tab}>CMS</div>
       </Link>

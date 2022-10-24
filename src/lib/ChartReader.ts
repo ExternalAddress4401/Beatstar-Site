@@ -21,7 +21,7 @@ interface BPM {
   change: number;
 }
 
-interface Size {
+export interface Size {
   offset: number;
   multiplier: number;
 }
@@ -41,6 +41,7 @@ interface Note {
   length: number;
   lane: number;
   swipe?: Direction;
+  size?: number;
 }
 
 type Direction = "u" | "d" | "l" | "r" | "ul" | "ur" | "dl" | "dr";
@@ -58,6 +59,20 @@ const splitRow = (value: string) => {
   };
 };
 
+function getNote(notes: Note[], offset: number, lane?: number) {
+  if (lane) {
+    return notes.find(
+      (note) =>
+        (note.offset === offset || note.offset + note.length === offset) &&
+        note.lane === lane - 1
+    );
+  } else {
+    return notes.find(
+      (note) => note.offset === offset || note.offset + length === offset
+    );
+  }
+}
+
 export function readChart(chart: string) {
   const parsedChart: Chart = {
     info: {},
@@ -72,7 +87,6 @@ export function readChart(chart: string) {
   const data = chart.split("\r\n").join("").split("}");
   for (const row of data) {
     const [heading, data] = row.split("{  ");
-    console.log(heading);
     switch (heading) {
       case "[Song]":
         for (const property of data.split("  ")) {
@@ -117,22 +131,33 @@ export function readChart(chart: string) {
           } else if (values[0] === "E") {
             const events = values[1].split(",");
             for (const event of events) {
-              const direction = event.slice(0, -1) as Direction;
-              const lane = parseInt(event.slice(-1));
+              //add support for s0.1 and p0.1...
+              if (event.startsWith("/")) {
+                const size = parseInt(event.slice(-1));
+                const note = getNote(parsedChart.notes, offset);
 
-              const note = parsedChart.notes.find(
-                (note) =>
-                  (note.offset === offset || note.offset + length === offset) &&
-                  note.lane === lane - 1
-              );
-              if (!note) {
-                parsedChart.errors.push(
-                  `An event was found at offset ${offset} but no note was found there.` //TODO: make this better
-                );
-                continue;
+                if (!note) {
+                  parsedChart.errors.push(
+                    `An event was found at offset ${offset} but no note was found there.` //TODO: make this better
+                  );
+                  continue;
+                }
+
+                note.size = size;
+              } else {
+                const direction = event.slice(0, -1) as Direction;
+                const lane = parseInt(event.slice(-1));
+                const note = getNote(parsedChart.notes, offset, lane);
+
+                if (!note) {
+                  parsedChart.errors.push(
+                    `An event was found at offset ${offset} but no note was found there.` //TODO: make this better
+                  );
+                  continue;
+                }
+
+                note.swipe = direction;
               }
-
-              note.swipe = direction;
             }
           }
         }
@@ -147,7 +172,7 @@ export function readBytes(json: any) {
 
   const parsedChart: Chart = {
     info: {
-      resolution: 192,
+      resolution,
     },
     syncTrack: [],
     sections: json.sections.map((section) =>

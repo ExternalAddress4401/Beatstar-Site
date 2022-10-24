@@ -3,12 +3,28 @@ import Input from "../components/Input";
 import Select from "../components/Select";
 import Button from "../components/Button";
 import { getRandomBetween } from "../utils/getRandomBetween";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Chart, readChart } from "../lib/ChartReader";
 import { readFile } from "../utils/readFile";
 import { isPng } from "../utils/isPng";
 import Footer from "../components/Footer";
 import UploadProps from "../interfaces/UploadProps";
+import { buildChart } from "../lib/ChartBuilder";
+import { ProtobufWriter, ChartProto } from "@externaladdress4401/protobuf";
+
+interface SongInfo {
+  title: string;
+  artist: string;
+  id: number;
+  difficulty: number;
+}
+
+interface BuiltSongInfo extends SongInfo {
+  bpm: number;
+  sections: number;
+  maxScore: number;
+  numLanes: number;
+}
 
 export default function Encrypt() {
   const [chart, setChart] = useState<UploadProps | null>({
@@ -20,8 +36,42 @@ export default function Encrypt() {
   const [artwork, setArtwork] = useState<UploadProps>({
     icon: "circle-question",
   });
-  const [id, setId] = useState<number>(getRandomBetween(2000, 10000));
+  const [info, setInfo] = useState<SongInfo>({
+    title: "",
+    artist: "",
+    id: getRandomBetween(2000, 10000),
+    difficulty: 1,
+  });
   const [errors, setErrors] = useState<string[] | null>(null);
+
+  const onInfoChange = (e: React.FormEvent<HTMLInputElement>) => {
+    switch (e.currentTarget.name) {
+      case "title":
+        setInfo({
+          ...info,
+          title: e.currentTarget.value,
+        });
+        break;
+      case "artist":
+        setInfo({
+          ...info,
+          artist: e.currentTarget.value,
+        });
+        break;
+      case "id":
+        setInfo({
+          ...info,
+          id: parseInt(e.currentTarget.value),
+        });
+        break;
+      case "difficulty":
+        setInfo({
+          ...info,
+          difficulty: parseInt(e.currentTarget.value),
+        });
+        break;
+    }
+  };
 
   const openFileDialog = (
     type: "chart" | "audio" | "artwork",
@@ -80,16 +130,35 @@ export default function Encrypt() {
     input.click();
   };
 
+  const onSubmit = () => {
+    const response = buildChart(chart.data as Chart);
+
+    const finalInfo: SongInfo = {
+      title: info.title,
+      artist: info.artist,
+      id: info.id,
+      difficulty: info.difficulty,
+      //bpm
+      //sections
+      //maxScore
+      //numLanes
+    };
+
+    const writer = new ProtobufWriter(response);
+    writer.build(ChartProto);
+    console.log(writer);
+  };
+
   return (
     <div className={styles.content}>
       <div className={styles.group}>
-        <Input label="Title" type="text" />
-        <Input label="Artist" type="text" />
+        <Input label="Title" type="text" onChange={onInfoChange} />
+        <Input label="Artist" type="text" onChange={onInfoChange} />
         <Input
           label="ID"
           type="number"
-          value={id}
-          onChange={(e) => setId(parseInt(e.currentTarget.value))}
+          value={info.id}
+          onChange={onInfoChange}
         />
         <Select label="Difficulty" />
       </div>
@@ -114,7 +183,7 @@ export default function Encrypt() {
           onClick={() => openFileDialog("artwork", ".png")}
         />
 
-        <Button label="Create" />
+        <Button label="Create" onClick={onSubmit} />
       </div>
       <Footer errors={errors} />
     </div>

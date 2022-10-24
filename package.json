@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@externaladdress4401/protobuf": "^1.0.4",
+    "@externaladdress4401/protobuf": "^1.0.7",
     "animejs": "^3.2.1",
     "axios": "^1.1.3",
     "classnames": "^2.3.2",

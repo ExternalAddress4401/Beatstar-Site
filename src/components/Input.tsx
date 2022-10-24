@@ -14,6 +14,7 @@ export default function Input({ label, type, value, onChange }: InputProps) {
       <label className={styles.label}>{label}</label>
       <input
         type={type}
+        name={label.toLowerCase()}
         className={styles.input}
         value={value}
         onChange={onChange}
