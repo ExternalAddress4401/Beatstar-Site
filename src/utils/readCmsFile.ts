@@ -6,17 +6,18 @@ import {
   AssetsPatchProto,
   AudioConfigProto,
   NewsProto,
-  ScalingConfigProto,
+  ScalingConfig,
   NotificationConfigProto,
   FontFallbackConfigProto,
   LiveOpsBundleConfigProto,
   LiveOpsEventProto,
-  LiveOpsDeeplinkRewardProto,
+  LiveOpsDeeplinkRewardConfigProto,
+  SongConfigProto,
   CMSRequester,
 } from "@externaladdress4401/protobuf";
 import { decompress } from "./decompress";
 
-type CMSFile =
+export type CMSFileName =
   | "GameConfig"
   | "LangConfig"
   | "AssetsPatchConfig"
@@ -27,9 +28,10 @@ type CMSFile =
   | "FontFallbackConfig"
   | "LiveOpsBundleConfig"
   | "LiveOpsEventConfig"
-  | "LiveOpsDeepLinkRewardConfig";
+  | "LiveOpsDeeplinkRewardConfig"
+  | "SongConfig";
 
-export async function readCmsFile(name: CMSFile) {
+export async function readCmsFile(name: CMSFileName) {
   const { url } = (await CMSRequester.getCMS()).find((el) => el.name === name);
   const data = await decompress(
     (
@@ -59,7 +61,7 @@ export async function readCmsFile(name: CMSFile) {
       parsed = reader.parseProto(NewsProto);
       break;
     case "ScalingConfig":
-      parsed = reader.parseProto(ScalingConfigProto);
+      parsed = reader.parseProto(ScalingConfig);
       break;
     case "NotificationConfig":
       parsed = reader.parseProto(NotificationConfigProto);
@@ -73,8 +75,11 @@ export async function readCmsFile(name: CMSFile) {
     case "LiveOpsEventConfig":
       parsed = reader.parseProto(LiveOpsEventProto);
       break;
-    case "LiveOpsDeepLinkRewardConfig":
-      parsed = reader.parseProto(LiveOpsDeeplinkRewardProto);
+    case "LiveOpsDeeplinkRewardConfig":
+      parsed = reader.parseProto(LiveOpsDeeplinkRewardConfigProto);
+      break;
+    case "SongConfig":
+      parsed = reader.parseProto(SongConfigProto);
       break;
   }
 

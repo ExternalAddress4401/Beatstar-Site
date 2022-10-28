@@ -11,6 +11,7 @@ import Footer from "../components/Footer";
 import UploadProps from "../interfaces/UploadProps";
 import { buildChart } from "../lib/ChartBuilder";
 import { ProtobufWriter, ChartProto } from "@externaladdress4401/protobuf";
+import { getMaxScore } from "../lib/ChartUtils";
 
 interface SongInfo {
   title: string;
@@ -131,16 +132,17 @@ export default function Encrypt() {
   };
 
   const onSubmit = () => {
-    const response = buildChart(chart.data as Chart);
+    const finalChart = chart.data as Chart;
+    const response = buildChart(finalChart);
 
-    const finalInfo: SongInfo = {
+    const finalInfo: BuiltSongInfo = {
       title: info.title,
       artist: info.artist,
       id: info.id,
       difficulty: info.difficulty,
-      //bpm
-      //sections
-      //maxScore
+      bpm: finalChart.syncTrack.find((el) => "change" in el).change,
+      sections: finalChart.sections.length,
+      maxScore: getMaxScore(finalChart, info.difficulty),
       //numLanes
     };
 
