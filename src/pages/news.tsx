@@ -37,7 +37,7 @@ export interface NewsProps {
 
 export default function news(news: NewsProps) {
   return (
-    <div>
+    <div className={styles.content}>
       {news.news.map((el) => (
         <NewsArticle
           title={el.title}

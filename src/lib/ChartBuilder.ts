@@ -31,18 +31,28 @@ interface BytesNote {
 }
 
 export function buildChart(chart: Chart) {
+  const resolution = chart.info.resolution;
+
   const finalChart: BuiltChart = {
     id: 508,
     interactions_id: "77-1",
     notes: [],
     sections: chart.sections.map((section) => {
-      return { offset: section };
+      return { offset: section / resolution };
     }),
-    perfectSizes: chart.perfectSizes,
-    speeds: chart.speeds,
+    perfectSizes: chart.perfectSizes.map((perfectSize) => {
+      return {
+        ...perfectSize,
+        offset: perfectSize.offset / resolution,
+      };
+    }),
+    speeds: chart.speeds.map((speed) => {
+      return {
+        ...speed,
+        offset: speed.offset / resolution,
+      };
+    }),
   };
-
-  const resolution = chart.info.resolution;
 
   for (const note of chart.notes) {
     const noteType = note.length === 0 ? 1 : 2;
@@ -51,7 +61,7 @@ export function buildChart(chart: Chart) {
         note_type: 1,
         single: {
           note: {
-            offset: note.offset,
+            offset: note.offset / resolution,
             lane: note.lane,
           },
         },
@@ -90,6 +100,5 @@ export function buildChart(chart: Chart) {
     });
   }
 
-  console.log(finalChart);
   return finalChart;
 }

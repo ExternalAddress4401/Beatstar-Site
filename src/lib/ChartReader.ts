@@ -91,7 +91,7 @@ export function readChart(chart: string) {
       case "[Song]":
         for (const property of data.split("  ")) {
           const [k, v] = property.split(" = ");
-          parsedChart.info[k] = v;
+          parsedChart.info[k.toLowerCase()] = v;
         }
         break;
       case "[SyncTrack]":
@@ -178,7 +178,7 @@ export function readBytes(json: any) {
     sections: json.sections.map((section) =>
       Math.round(section.offset * resolution)
     ),
-    perfectSizes: json.perfects.map((size: Size) => {
+    perfectSizes: json.perfectSizes.map((size: Size) => {
       return {
         offset: size.offset ? Math.round(size.offset * 192) : 0,
         multiplier: size.multiplier,
@@ -197,9 +197,10 @@ export function readBytes(json: any) {
   const directions: Direction[] = ["u", "d", "l", "r"];
 
   for (const note of json.notes) {
+    console.log(note);
     if (note.note_type === 1) {
       const offset = Math.round(note.single.note.offset * resolution);
-      const lane = note.single.note.lane - 1;
+      const lane = note.lane - 1;
 
       parsedChart.notes.push({
         offset,
@@ -209,7 +210,7 @@ export function readBytes(json: any) {
       });
     } else if (note.note_type === 2) {
       const offset = Math.round(note.long.note[0].offset * resolution);
-      const lane = note.long.note[0].lane - 1;
+      const lane = note.lane - 1;
       const length = Math.round(
         (note.long.note[1].offset - note.long.note[0].offset) * resolution
       );

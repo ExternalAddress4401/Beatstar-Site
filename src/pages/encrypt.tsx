@@ -12,19 +12,14 @@ import UploadProps from "../interfaces/UploadProps";
 import { buildChart } from "../lib/ChartBuilder";
 import { ProtobufWriter, ChartProto } from "@externaladdress4401/protobuf";
 import { getMaxScore } from "../lib/ChartUtils";
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
-interface SongInfo {
+export interface SongInfo {
   title: string;
   artist: string;
   id: number;
   difficulty: number;
-}
-
-interface BuiltSongInfo extends SongInfo {
-  bpm: number;
-  sections: number;
-  maxScore: number;
-  numLanes: number;
 }
 
 export default function Encrypt() {
@@ -94,6 +89,7 @@ export default function Encrypt() {
           setChart({
             name: file.name,
             data: readChart(chartData.toString()),
+            file: file,
             icon: "check",
           });
           break;
@@ -105,6 +101,7 @@ export default function Encrypt() {
           setAudio({
             name: file.name,
             data: audioData,
+            file: file,
             icon: "check",
           });
           break;
@@ -123,6 +120,7 @@ export default function Encrypt() {
           setArtwork({
             name: file.name,
             data: artworkData,
+            file: file,
             icon: "check",
           });
           break;
@@ -131,9 +129,37 @@ export default function Encrypt() {
     input.click();
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    const formData = new FormData();
+    formData.append("chart", chart.file);
+    formData.append("artwork", artwork.file);
+    formData.append("audio", audio.file);
+    formData.append("uuid", uuidv4());
+    formData.append("info", JSON.stringify(info));
+
+    const response = await axios.post("/api/build", formData, {
+      responseType: "arraybuffer",
+    });
+
+    if (response.status === 200) {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "song.zip");
+      document.body.appendChild(link);
+      link.click();
+    }
+
+    /*const uuid = uuidv4();
+
     const finalChart = chart.data as Chart;
-    const response = buildChart(finalChart);
+    const protobufChart = buildChart(finalChart); //chart as JSON in protobuf format
+
+    const numLanes =
+      protobufChart.notes.reduce(
+        (prev, curr) => (curr.lane > prev ? curr.lane : prev),
+        0
+      ) + 1;
 
     const finalInfo: BuiltSongInfo = {
       title: info.title,
@@ -143,12 +169,18 @@ export default function Encrypt() {
       bpm: finalChart.syncTrack.find((el) => "change" in el).change,
       sections: finalChart.sections.length,
       maxScore: getMaxScore(finalChart, info.difficulty),
-      //numLanes
+      numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
     };
 
-    const writer = new ProtobufWriter(response);
+    //chart - done
+    //audio
+    //artwork
+    //info - done
+
+    //generate chart
+    const writer = new ProtobufWriter(protobufChart);
     writer.build(ChartProto);
-    console.log(writer);
+    //chart is now in writer.buffer*/
   };
 
   return (
