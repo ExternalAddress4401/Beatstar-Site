@@ -8,19 +8,19 @@ export default function Navigation() {
         <img className={styles.logo} src="images/logo.png" />
       </Link>
       <Link href="/encrypt">
-        <div className={styles.tab}>Encrypt</div>
+        <div className={styles.redTab}>Encrypt</div>
       </Link>
       <Link href="/decrypt">
-        <div className={styles.tab}>Decrypt</div>
+        <div className={styles.yellowTab}>Decrypt</div>
       </Link>
       <Link href="/leaderboard">
-        <div className={styles.tab}>Leaderboard</div>
+        <div className={styles.greenTab}>Leaderboard</div>
       </Link>
       <Link href="/news">
-        <div className={styles.tab}>News</div>
+        <div className={styles.blueTab}>News</div>
       </Link>
       <Link href="/cms">
-        <div className={styles.tab}>CMS</div>
+        <div className={styles.purpleTab}>CMS</div>
       </Link>
     </div>
   );

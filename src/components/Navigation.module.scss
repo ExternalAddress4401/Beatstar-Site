@@ -9,7 +9,7 @@
   background-color: black;
 }
 
-.tab {
+@mixin tabAfter($color) {
   cursor: pointer;
   display: inline-block;
   position: relative;
@@ -26,15 +26,30 @@
     transition: transform 0.25s ease-out;
     background-color: white;
     border: 2px solid white;
-
     outline: none;
-    border-color: red;
-    box-shadow: 0 0 10px red;
+    border-color: $color;
+    box-shadow: 0 0 10px $color;
   }
 
   &:hover:after {
     transform: scaleX(1);
   }
+}
+
+.redTab {
+  @include tabAfter(red);
+}
+.yellowTab {
+  @include tabAfter(yellow);
+}
+.greenTab {
+  @include tabAfter(green);
+}
+.blueTab {
+  @include tabAfter(blue);
+}
+.purpleTab {
+  @include tabAfter(magenta);
 }
 
 @keyframes underline {
