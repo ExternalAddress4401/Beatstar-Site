@@ -68,7 +68,7 @@ function getNote(notes: Note[], offset: number, lane?: number) {
     );
   } else {
     return notes.find(
-      (note) => note.offset === offset || note.offset + length === offset
+      (note) => note.offset === offset || note.offset + note.length === offset
     );
   }
 }
@@ -84,18 +84,22 @@ export function readChart(chart: string) {
     errors: [],
   };
 
-  const data = chart.split("\r\n").join("").split("}");
+  const data = chart.split("\n").join("").split("}");
+
   for (const row of data) {
-    const [heading, data] = row.split("{  ");
-    switch (heading) {
+    const [heading, data] = row.split("{");
+    switch (heading.trim()) {
       case "[Song]":
         for (const property of data.split("  ")) {
+          if (!property) {
+            continue;
+          }
           const [k, v] = property.split(" = ");
           parsedChart.info[k.toLowerCase()] = v;
         }
         break;
       case "[SyncTrack]":
-        for (const property of data.split("  ")) {
+        for (const property of data.split("  ").filter(Boolean)) {
           const { offset, values } = splitRow(property);
           if (values.length === 3) {
             parsedChart.syncTrack.push({
@@ -146,7 +150,7 @@ export function readChart(chart: string) {
                 note.size = size;
               } else {
                 const direction = event.slice(0, -1) as Direction;
-                const lane = parseInt(event.slice(-1));
+                const lane = parseInt(event.trim().slice(-1));
                 const note = getNote(parsedChart.notes, offset, lane);
 
                 if (!note) {

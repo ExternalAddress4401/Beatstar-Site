@@ -1,0 +1,27 @@
+.tile {
+  width: 100px;
+  height: 150px;
+  background-color: #222;
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
+
+.innerTile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 130px;
+  background-color: black;
+  border-radius: 5px;
+}
+
+.line {
+  width: 60px;
+  height: 5px;
+  background-color: white;
+  box-shadow: 0 0 20px 5px blue;
+}

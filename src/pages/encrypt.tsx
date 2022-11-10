@@ -4,14 +4,11 @@ import Select from "../components/Select";
 import Button from "../components/Button";
 import { getRandomBetween } from "../utils/getRandomBetween";
 import React, { useState } from "react";
-import { Chart, readChart } from "../lib/ChartReader";
+import { readChart } from "../lib/ChartReader";
 import { readFile } from "../utils/readFile";
 import { isPng } from "../utils/isPng";
 import Footer from "../components/Footer";
 import UploadProps from "../interfaces/UploadProps";
-import { buildChart } from "../lib/ChartBuilder";
-import { ProtobufWriter, ChartProto } from "@externaladdress4401/protobuf";
-import { getMaxScore } from "../lib/ChartUtils";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 

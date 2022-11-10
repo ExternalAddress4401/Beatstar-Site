@@ -2,7 +2,6 @@ import { roundToPlaces } from "../utils/roundToPlaces";
 import { Chart } from "./ChartReader";
 
 export function writeChart(chart: Chart) {
-  console.log(chart);
   let chartString = `[Song]\n{\n  Offset = 0\n  Resolution = 192\n  Player2 = bass\n  Difficulty = 0\n  PreviewStart = 0\n  PreviewEnd = 0\n  Genre = "rock"\n  MediaType = "cd"\n}\n`;
   chartString += `[SyncTrack]\n{\n  0 = TS 4\n  0 = B 120000\n}\n`;
   chartString += `[Events]\n{\n`;
