@@ -1,9 +1,6 @@
 import Button from "../components/Button";
-import { ProtobufReader, ChartProto } from "@externaladdress4401/protobuf";
-import { readFile } from "../utils/readFile";
 import { useState } from "react";
 import Footer from "../components/Footer";
-import UploadProps from "../interfaces/UploadProps";
 import TextArea from "../components/TextArea";
 import { writeChart } from "../lib/ChartWriter";
 import styles from "./decrypt.module.scss";
@@ -11,7 +8,7 @@ import { readBytes, Chart } from "../lib/ChartReader";
 import axios from "axios";
 
 export default function decrypt() {
-  const [json, setJson] = useState<UploadProps | null>(null);
+  const [json, setJson] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const openAudioDialog = () => {
@@ -40,30 +37,22 @@ export default function decrypt() {
   const openFileDialog = () => {
     let input = document.createElement("input");
     input.type = "file";
-    input.accept = ".bytes";
+    input.accept = ".bundle";
     input.onchange = async function () {
       const file = input.files[0];
-      const data = (await readFile(file, "arraybuffer")) as ArrayBuffer;
+      const formData = new FormData();
+      formData.append("chart", input.files[0]);
 
-      try {
-        const reader = new ProtobufReader(Buffer.from(data));
-        reader.process();
+      const response = await axios.post("/api/extract-chart", formData);
+      const data = response.data;
 
-        setJson({
-          name: file.name,
-          data: reader.parseProto(ChartProto),
-          icon: "none",
-        });
-      } catch (e) {
-        console.log(e);
-        setError(e.message);
-      }
+      setJson(data);
     };
     input.click();
   };
 
   const onDownload = () => {
-    const chart = readBytes(json.data);
+    const chart = readBytes(json);
     const chartString = writeChart(chart);
 
     const element = document.createElement("a");
@@ -78,7 +67,7 @@ export default function decrypt() {
       <h1>Decrypt</h1>
       {json ? (
         <div className={styles.center}>
-          <TextArea text={JSON.stringify(json.data, null, 2)} />
+          <TextArea text={JSON.stringify(json, null, 2)} />
           <Button label="Download" onClick={onDownload} />
         </div>
       ) : (

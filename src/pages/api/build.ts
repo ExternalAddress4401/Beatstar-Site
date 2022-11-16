@@ -32,7 +32,6 @@ export default async function handler(
 
   const { files, fields } = await parseForm(form, req);
   const info = JSON.parse(fields.info);
-  console.log(info);
 
   //files should have 3 files
   if (Object.keys(files).length != 3) {
@@ -44,55 +43,59 @@ export default async function handler(
   //create the main directory structure
   await buildDirectoryStructure(uuid);
 
-  //copy the uploaded files into there
-  //yes these need to be their own folders because of how the asset replacer works
-  await fs.rename(
-    files.artwork.filepath,
-    `./${uuid}/artwork/FooFighter_Everlong.png`
-  );
+  try {
+    //copy the uploaded files into there
+    //yes these need to be their own folders because of how the asset replacer works
+    await fs.rename(
+      files.artwork.filepath,
+      `./${uuid}/artwork/FooFighter_Everlong.png`
+    );
 
-  await fs.rename(files.audio.filepath, `./${uuid}/audio/bnk/1.wem`);
-  await fs.rename(files.chart.filepath, `./${uuid}/chart/508`);
+    await fs.rename(files.audio.filepath, `./${uuid}/audio/bnk/1.wem`);
+    await fs.rename(files.chart.filepath, `./${uuid}/chart/508`);
 
-  //conver the chart to beatstars format
-  const chart = await parseChart(uuid);
-  const numLanes = chart.notes.reduce(
-    (prev, curr) => (curr.lane > prev ? curr.lane : prev),
-    0
-  );
+    //conver the chart to beatstars format
+    const chart = await parseChart(uuid);
+    const numLanes = chart.notes.reduce(
+      (prev, curr) => (curr.lane > prev ? curr.lane : prev),
+      0
+    );
 
-  const promises = [
-    replaceChart(uuid),
-    replaceArtwork(uuid),
-    replaceAudio(uuid),
-  ];
+    const promises = [
+      replaceChart(uuid),
+      replaceArtwork(uuid),
+      replaceAudio(uuid),
+    ];
 
-  Promise.all(promises).then(async function () {
-    const finalInfo: BuiltSongInfo = {
-      title: info.title,
-      artist: info.artist,
-      id: info.id,
-      difficulty: info.difficulty,
-      bpm: chart.syncTrack.find((el) => "change" in el).change,
-      sections: chart.sections.length,
-      maxScore: getMaxScore(chart, info.difficulty),
-      numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
-    };
+    Promise.all(promises).then(async function () {
+      const finalInfo: BuiltSongInfo = {
+        title: info.title,
+        artist: info.artist,
+        id: info.id,
+        difficulty: info.difficulty,
+        bpm: chart.bpms[0].change,
+        sections: chart.sections.length,
+        maxScore: getMaxScore(chart, info.difficulty),
+        numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
+      };
 
-    const zip = new JSZip();
-    zip.file("artwork.bundle", await fs.readFile(`./${uuid}/artwork.bundle`));
-    zip.file("audio.bundle", await fs.readFile(`./${uuid}/audio.bundle`));
-    zip.file("chart.bundle", await fs.readFile(`./${uuid}/chart.bundle`));
-    zip.file("info.json", JSON.stringify(finalInfo));
+      const zip = new JSZip();
+      zip.file("artwork.bundle", await fs.readFile(`./${uuid}/artwork.bundle`));
+      zip.file("audio.bundle", await fs.readFile(`./${uuid}/audio.bundle`));
+      zip.file("chart.bundle", await fs.readFile(`./${uuid}/chart.bundle`));
+      zip.file("info.json", JSON.stringify(finalInfo));
 
-    zip
-      .generateNodeStream({ type: "nodebuffer", streamFiles: true })
-      .pipe(res)
-      .on("finish", function () {
-        res.status(200);
-        res.end();
-      });
-  });
+      zip
+        .generateNodeStream({ type: "nodebuffer", streamFiles: true })
+        .pipe(res)
+        .on("finish", function () {
+          res.status(200);
+          res.end();
+        });
+    });
+  } catch (e) {
+    await fs.rm(`./${uuid}`, { recursive: true, force: true });
+  }
 }
 
 function parseForm(form: any, req: NextApiRequest) {

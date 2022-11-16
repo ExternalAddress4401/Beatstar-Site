@@ -1,3 +1,5 @@
+import { adjustBpms } from "./ChartUtils";
+
 interface Info {
   offset?: number;
   resolution?: number;
@@ -10,13 +12,7 @@ interface Info {
   musicStream?: string;
 }
 
-interface TimeSignature {
-  offset: number;
-  top: number;
-  bottom: number;
-}
-
-interface BPM {
+export interface BPM {
   offset: number;
   change: number;
 }
@@ -26,14 +22,20 @@ export interface Size {
   multiplier: number;
 }
 
+interface Effect {
+  offset: number;
+  effect: string;
+}
+
 export interface Chart {
   info: Info;
-  syncTrack: Array<TimeSignature | BPM>;
+  bpms: BPM[];
   sections: number[];
   notes: Note[];
   perfectSizes: Size[];
   speeds: Size[];
   errors: string[];
+  effects: Effect[];
 }
 
 interface Note {
@@ -42,6 +44,8 @@ interface Note {
   lane: number;
   swipe?: Direction;
   size?: number;
+  adjustedStart?: number;
+  adjustedEnd?: number;
 }
 
 type Direction = "u" | "d" | "l" | "r" | "ul" | "ur" | "dl" | "dr";
@@ -76,15 +80,16 @@ function getNote(notes: Note[], offset: number, lane?: number) {
 export function readChart(chart: string) {
   const parsedChart: Chart = {
     info: {},
-    syncTrack: [],
+    bpms: [],
     sections: [],
     notes: [],
     perfectSizes: [],
     speeds: [],
     errors: [],
+    effects: [],
   };
 
-  const data = chart.split("\n").join("").split("}");
+  const data = chart.split("\r\n").join("").split("}");
 
   for (const row of data) {
     const [heading, data] = row.split("{");
@@ -101,14 +106,9 @@ export function readChart(chart: string) {
       case "[SyncTrack]":
         for (const property of data.split("  ").filter(Boolean)) {
           const { offset, values } = splitRow(property);
-          if (values.length === 3) {
-            parsedChart.syncTrack.push({
-              offset,
-              top: parseInt(values[1]),
-              bottom: parseInt(values[2]),
-            });
-          } else {
-            parsedChart.syncTrack.push({
+          console.log(offset, values);
+          if (values[0] === "B") {
+            parsedChart.bpms.push({
               offset,
               change: parseInt(values[1].slice(0, -3)),
             });
@@ -168,6 +168,9 @@ export function readChart(chart: string) {
         break;
     }
   }
+  console.log(parsedChart);
+  adjustBpms(parsedChart);
+  console.log(parsedChart);
   return parsedChart;
 }
 
@@ -178,7 +181,7 @@ export function readBytes(json: any) {
     info: {
       resolution,
     },
-    syncTrack: [],
+    bpms: [],
     sections: json.sections.map((section) =>
       Math.round(section.offset * resolution)
     ),
@@ -196,6 +199,7 @@ export function readBytes(json: any) {
     }),
     notes: [],
     errors: [],
+    effects: [],
   };
 
   const directions: Direction[] = ["u", "d", "l", "r"];

@@ -1,0 +1,78 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import formidable from "formidable";
+import { promises as fs } from "fs";
+import { execFile } from "child_process";
+import { v4 as uuidv4 } from "uuid";
+import { createReadStream } from "fs";
+import { ProtobufReader, ChartProto } from "@externaladdress4401/protobuf";
+
+export const config = {
+  api: {
+    bodyParser: false,
+    sizeLimit: "8mb",
+  },
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const form = formidable();
+
+  const { files, fields } = await parseForm(form, req);
+
+  if (Object.keys(files).length !== 1) {
+    throw new Error("Not enough files uploaded.");
+  }
+
+  const chart = files.chart;
+  const uuid = uuidv4();
+
+  await fs.mkdir(`./${uuid}`);
+  await fs.rename(chart.filepath, `./${uuid}/chart.bundle`);
+
+  await extractChart(uuid);
+
+  const data = await fs.readFile(
+    `./${uuid}/` +
+      (
+        await fs.readdir(`./${uuid}`)
+      ).filter((file) => !file.includes(".bundle"))[0]
+  );
+
+  const reader = new ProtobufReader(data);
+  reader.process();
+
+  const parsed = reader.parseProto(ChartProto);
+
+  await fs.rm(`./${uuid}`, { recursive: true, force: true });
+
+  res.json(parsed);
+  res.end();
+}
+
+function parseForm(form: any, req: NextApiRequest) {
+  return new Promise(function (resolve, reject) {
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+        throw err;
+      }
+      resolve({
+        files,
+        fields,
+      });
+    });
+  });
+}
+
+async function extractChart(uuid: string) {
+  return new Promise<void>(function (resolve, reject) {
+    execFile(
+      "tools/replacer/UnityAssetReplacer.exe",
+      ["-b", `./${uuid}/chart.bundle`, "-d", `./${uuid}`, "-m", "m_Script"],
+      async function (a1, a2, a3) {
+        resolve();
+      }
+    );
+  });
+}

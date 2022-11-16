@@ -5,6 +5,7 @@ import { useState } from "react";
 import axios from "axios";
 import { CMSFileName } from "../utils/readCmsFile";
 import TextArea from "../components/TextArea";
+import BasicLoader from "../components/BasicLoader";
 
 interface CMSProps {
   cms: {
@@ -17,18 +18,25 @@ interface CMSProps {
 
 export default function cms({ cms }: CMSProps) {
   const [selectedCms, setSelectedCms] = useState<string | null>(null);
-
-  console.log(selectedCms);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const readCms = async (name: CMSFileName) => {
+    setIsLoading(true);
     const response = await axios.post("/api/read-cms-file", { name });
 
     if (response.status === 200) {
+      setIsLoading(false);
       setSelectedCms(response.data);
     }
   };
 
-  if (!selectedCms) {
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <BasicLoader />
+      </div>
+    );
+  } else if (!selectedCms) {
     return (
       <div className={styles.container}>
         <h1>CMS</h1>
