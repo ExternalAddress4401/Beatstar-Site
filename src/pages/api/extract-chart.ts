@@ -71,6 +71,7 @@ async function extractChart(uuid: string) {
       "tools/replacer/UnityAssetReplacer.exe",
       ["-b", `./${uuid}/chart.bundle`, "-d", `./${uuid}`, "-m", "m_Script"],
       async function (a1, a2, a3) {
+        console.log(a1, a2, a3);
         resolve();
       }
     );
