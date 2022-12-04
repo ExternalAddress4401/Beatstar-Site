@@ -68,34 +68,51 @@ export default async function handler(
     ];
 
     Promise.all(promises).then(async function () {
-      const finalInfo: BuiltSongInfo = {
-        title: info.title,
-        artist: info.artist,
-        id: info.id,
-        difficulty: info.difficulty,
-        bpm: chart.bpms[0].change,
-        sections: chart.sections.length,
-        maxScore: getMaxScore(chart, info.difficulty),
-        numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
-      };
+      try {
+        const finalInfo: BuiltSongInfo = {
+          title: info.title,
+          artist: info.artist,
+          id: info.id,
+          difficulty: info.difficulty,
+          bpm: chart.bpms[0].change,
+          sections: chart.sections.length,
+          maxScore: getMaxScore(chart, info.difficulty),
+          numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
+        };
 
-      const zip = new JSZip();
-      zip.file("artwork.bundle", await fs.readFile(`./${uuid}/artwork.bundle`));
-      zip.file("audio.bundle", await fs.readFile(`./${uuid}/audio.bundle`));
-      zip.file("chart.bundle", await fs.readFile(`./${uuid}/chart.bundle`));
-      zip.file("info.json", JSON.stringify(finalInfo));
+        const zip = new JSZip();
+        zip.file(
+          "artwork.bundle",
+          await fs.readFile(`./${uuid}/artwork.bundle`)
+        );
+        zip.file("audio.bundle", await fs.readFile(`./${uuid}/audio.bundle`));
+        zip.file("chart.bundle", await fs.readFile(`./${uuid}/chart.bundle`));
+        zip.file("info.json", JSON.stringify(finalInfo));
 
-      zip
-        .generateNodeStream({ type: "nodebuffer", streamFiles: true })
-        .pipe(res)
-        .on("finish", function () {
-          fs.rm(`./${uuid}`, { recursive: true, force: true });
-          res.status(200);
-          res.end();
-        });
+        zip
+          .generateNodeStream({ type: "nodebuffer", streamFiles: true })
+          .pipe(res)
+          .on("finish", function () {
+            fs.rm(`./${uuid}`, { recursive: true, force: true });
+            res.status(200);
+            res.end();
+          });
+      } catch (e) {
+        console.log("ERROR", e);
+        await fs.rm(`./${uuid}`, { recursive: true, force: true });
+        res
+          .status(500)
+          .json({ errors: ["Something went wrong encrypting your chart."] });
+        res.end();
+      }
     });
   } catch (e) {
+    console.log("ERROR", e);
     await fs.rm(`./${uuid}`, { recursive: true, force: true });
+    res
+      .status(500)
+      .json({ errors: ["Something went wrong encrypting your chart."] });
+    res.end();
   }
 }
 

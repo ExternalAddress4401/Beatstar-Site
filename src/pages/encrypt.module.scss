@@ -12,3 +12,11 @@
   gap: 10px;
   margin-bottom: 1rem;
 }
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 96vh;
+}

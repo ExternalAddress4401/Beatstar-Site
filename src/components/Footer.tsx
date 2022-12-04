@@ -1,10 +1,12 @@
+import cn from "classnames";
 import styles from "./Footer.module.scss";
 
 interface FooterProps {
   errors: string | string[];
+  onClose: () => void;
 }
 
-export default function Footer({ errors }: FooterProps) {
+export default function Footer({ errors, onClose }: FooterProps) {
   if (!errors) {
     return;
   }
@@ -14,7 +16,7 @@ export default function Footer({ errors }: FooterProps) {
   return (
     <div className={styles.footer}>
       <div className={styles.content}>
-        <i className="fa-solid fa-x"></i>
+        <i className={cn("fa-solid fa-x", styles.icon)} onClick={onClose}></i>
         {errors}
       </div>
     </div>

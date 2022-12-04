@@ -10,7 +10,8 @@ import { isPng } from "../utils/isPng";
 import Footer from "../components/Footer";
 import UploadProps from "../interfaces/UploadProps";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import BasicLoader from "../components/BasicLoader";
 
 export interface SongInfo {
   title: string;
@@ -20,10 +21,10 @@ export interface SongInfo {
 }
 
 export default function Encrypt() {
-  const [chart, setChart] = useState<UploadProps | null>({
+  const [chart, setChart] = useState<UploadProps>({
     icon: "circle-question",
   });
-  const [audio, setAudio] = useState<UploadProps | null>({
+  const [audio, setAudio] = useState<UploadProps>({
     icon: "circle-question",
   });
   const [artwork, setArtwork] = useState<UploadProps>({
@@ -36,6 +37,7 @@ export default function Encrypt() {
     difficulty: 1,
   });
   const [errors, setErrors] = useState<string[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const difficulties = {
     Extreme: 1,
@@ -73,7 +75,9 @@ export default function Encrypt() {
   };
 
   const shouldShowCreateButton = () => {
-    return info.title && info.artist && chart && audio && artwork;
+    return (
+      info.title && info.artist && chart.data && audio.data && artwork.data
+    );
   };
 
   const openFileDialog = (
@@ -144,25 +148,51 @@ export default function Encrypt() {
     formData.append("uuid", uuidv4());
     formData.append("info", JSON.stringify(info));
 
-    const response = await axios.post("/api/build", formData, {
-      responseType: "arraybuffer",
-    });
+    setLoading(true);
 
-    if (response.status === 200) {
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "song.zip");
-      document.body.appendChild(link);
-      link.click();
+    try {
+      const response = await axios.post("/api/build", formData, {
+        responseType: "arraybuffer",
+      });
+      if (response.status === 200) {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "song.zip");
+        document.body.appendChild(link);
+        link.click();
+      }
+    } catch (e) {
+      const error: any = JSON.parse(Buffer.from(e.response.data) as any).errors;
+      setErrors(error);
     }
+
+    setLoading(false);
   };
+
+  if (loading) {
+    return (
+      <div className={styles.loader}>
+        <BasicLoader />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.content}>
       <div className={styles.group}>
-        <Input label="Title" type="text" onChange={onInfoChange} />
-        <Input label="Artist" type="text" onChange={onInfoChange} />
+        <Input
+          label="Title"
+          type="text"
+          value={info.title}
+          onChange={onInfoChange}
+        />
+        <Input
+          label="Artist"
+          type="text"
+          value={info.artist}
+          onChange={onInfoChange}
+        />
         <Input
           label="ID"
           type="number"
@@ -196,7 +226,7 @@ export default function Encrypt() {
           <Button label="Create" onClick={onSubmit} />
         )}
       </div>
-      <Footer errors={errors} />
+      <Footer errors={errors} onClose={() => setErrors(null)} />
     </div>
   );
 }
