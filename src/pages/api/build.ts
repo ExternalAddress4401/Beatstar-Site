@@ -33,17 +33,16 @@ export default async function handler(
   const { files, fields } = await parseForm(form, req);
   const info = JSON.parse(fields.info);
 
-  //files should have 3 files
-  if (Object.keys(files).length != 3) {
-    throw Error("Not enough files uploaded.");
-  }
-
   const uuid = fields.uuid;
 
-  //create the main directory structure
-  await buildDirectoryStructure(uuid);
-
   try {
+    //files should have 3 files
+    if (Object.keys(files).length != 3) {
+      throw Error("Not enough files uploaded.");
+    }
+
+    //create the main directory structure
+    await buildDirectoryStructure(uuid);
     //copy the uploaded files into there
     //yes these need to be their own folders because of how the asset replacer works
     await fs.rename(
