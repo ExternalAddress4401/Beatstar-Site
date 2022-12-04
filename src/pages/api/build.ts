@@ -100,7 +100,10 @@ export default async function handler(
   }
 }
 
-function parseForm(form: any, req: NextApiRequest) {
+function parseForm(
+  form: any,
+  req: NextApiRequest
+): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
       if (err) {
