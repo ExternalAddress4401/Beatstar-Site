@@ -7,7 +7,7 @@ import styles from "./decrypt.module.scss";
 import { readBytes, Chart } from "../lib/ChartReader";
 import axios from "axios";
 
-export default function decrypt() {
+export default function Decrypt() {
   const [json, setJson] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 

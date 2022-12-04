@@ -35,11 +35,12 @@ export interface NewsProps {
   nextStoryId: number;
 }
 
-export default function news(news: NewsProps) {
+export default function News(news: NewsProps) {
   return (
     <div className={styles.content}>
       {news.news.map((el) => (
         <NewsArticle
+          key={el.title}
           title={el.title}
           image={el.images}
           content={el.piece.html}

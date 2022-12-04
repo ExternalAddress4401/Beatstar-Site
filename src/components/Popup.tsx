@@ -13,7 +13,7 @@ export default function Popup({ messages }: PopupProps) {
       <div className={styles.content}>
         <h1>Error</h1>
         {messages.map((message) => (
-          <div>{message}</div>
+          <div key={message}>{message}</div>
         ))}
       </div>
     </div>

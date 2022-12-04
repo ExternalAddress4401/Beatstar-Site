@@ -16,7 +16,7 @@ interface CMSProps {
   }[];
 }
 
-export default function cms({ cms }: CMSProps) {
+export default function Cms({ cms }: CMSProps) {
   const [selectedCms, setSelectedCms] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
