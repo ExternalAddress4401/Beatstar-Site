@@ -72,6 +72,10 @@ export default function Encrypt() {
     }
   };
 
+  const shouldShowCreateButton = () => {
+    return info.title && info.artist && chart && audio && artwork;
+  };
+
   const openFileDialog = (
     type: "chart" | "audio" | "artwork",
     filter: string
@@ -170,25 +174,27 @@ export default function Encrypt() {
 
       <div className={styles.group}>
         <Button
-          label={chart.name ? chart.name.slice(0, 22) + "..." : "Chart"}
+          label={chart.name ? chart.name.slice(0, 20) + "..." : "Chart"}
           startIcon="upload"
           endIcon={chart.icon}
           onClick={() => openFileDialog("chart", ".chart")}
         />
         <Button
-          label={audio.name ? audio.name.slice(0, 22) + "..." : "Audio"}
+          label={audio.name ? audio.name.slice(0, 20) + "..." : "Audio"}
           startIcon="upload"
           endIcon={audio.icon}
           onClick={() => openFileDialog("audio", ".wem")}
         />
         <Button
-          label={artwork.name ? artwork.name.slice(0, 22) + "..." : "Artwork"}
+          label={artwork.name ? artwork.name.slice(0, 20) + "..." : "Artwork"}
           startIcon="upload"
           endIcon={artwork.icon}
           onClick={() => openFileDialog("artwork", ".png")}
         />
 
-        <Button label="Create" onClick={onSubmit} />
+        {shouldShowCreateButton() && (
+          <Button label="Create" onClick={onSubmit} />
+        )}
       </div>
       <Footer errors={errors} />
     </div>
