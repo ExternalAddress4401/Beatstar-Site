@@ -54,8 +54,9 @@ export default async function handler(
     await fs.rename(files.audio.filepath, `./${uuid}/audio/bnk/1.wem`);
     await fs.rename(files.chart.filepath, `./${uuid}/chart/508`);
 
-    //conver the chart to beatstars format
+    //convert the chart to beatstars format
     const chart = await parseChart(uuid);
+
     const numLanes = chart.notes.reduce(
       (prev, curr) => (curr.lane > prev ? curr.lane : prev),
       0
@@ -89,6 +90,7 @@ export default async function handler(
         .generateNodeStream({ type: "nodebuffer", streamFiles: true })
         .pipe(res)
         .on("finish", function () {
+          fs.rm(`./${uuid}`, { recursive: true, force: true });
           res.status(200);
           res.end();
         });
@@ -116,12 +118,17 @@ async function parseChart(uuid: string) {
   const chart: Chart = readChart(
     (await fs.readFile(`./${uuid}/chart/508`)).toString()
   );
-  const writer = new ProtobufWriter(buildChart(chart));
-  writer.build(ChartProto);
 
-  await fs.writeFile(`${uuid}/chart/508`, writer.buffer);
+  try {
+    const writer = new ProtobufWriter(buildChart(chart));
+    writer.build(ChartProto);
 
-  return chart;
+    await fs.writeFile(`${uuid}/chart/508`, writer.buffer);
+
+    return chart;
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 async function buildDirectoryStructure(uuid: string) {

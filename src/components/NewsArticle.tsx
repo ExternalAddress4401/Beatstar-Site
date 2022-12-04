@@ -29,15 +29,11 @@ export default function NewsArticle({
 
   let match;
   while ((match = /<style="(.*?)">/g.exec(content))) {
-    console.log(match[1]);
     content = content.replace(
       /<style="(.*?)">/,
       `<span className=${styles[match[1]]}>`
     );
   }
-
-  console.log(parse(content));
-  console.log(content);
 
   content = `<span className=NewsArticle_H2__0_d9o><span className=NewsArticle_Bold__ZUMTO><span style="color: #f4be4e;><span className=NewsArticle_Link__X_nUb><a>WATCH TRAILER!</a></span></span></span></span>
 

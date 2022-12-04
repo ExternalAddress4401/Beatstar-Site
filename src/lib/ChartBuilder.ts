@@ -1,4 +1,4 @@
-import { Chart, Size } from "./ChartReader";
+import { Chart, Effect, Size } from "./ChartReader";
 
 interface BuiltChart {
   id: number;
@@ -7,13 +7,14 @@ interface BuiltChart {
   sections: BuiltSection[];
   perfectSizes: Size[];
   speeds: Size[];
+  effects: Effect[];
 }
 
 interface BuiltSection {
   offset: number;
 }
 
-interface BytesNote {
+export interface BytesNote {
   note_type: number;
   single?: {
     note: {
@@ -31,6 +32,7 @@ interface BytesNote {
 }
 
 export function buildChart(chart: Chart) {
+  const directions = ["u", "d", "l", "r"];
   const resolution = chart.info.resolution;
 
   const finalChart: BuiltChart = {
@@ -52,6 +54,12 @@ export function buildChart(chart: Chart) {
         offset: speed.offset / resolution,
       };
     }),
+    effects: Object.entries(chart.effects).map((effect) => {
+      return {
+        offset: parseFloat(effect[0]) / resolution,
+        effects: effect[1],
+      };
+    }),
   };
 
   for (const note of chart.notes) {
@@ -62,10 +70,12 @@ export function buildChart(chart: Chart) {
         single: {
           note: {
             offset: note.offset / resolution,
-            lane: note.lane,
+            lane: note.lane + 1,
           },
+          ...(note.swipe && { swipe: directions.indexOf(note.swipe) + 1 }),
         },
-        lane: note.lane,
+        lane: note.lane + 1,
+        ...(note.size && { size: note.size }),
       });
     } else if (noteType === 2) {
       finalChart.notes.push({
@@ -73,16 +83,18 @@ export function buildChart(chart: Chart) {
         long: {
           note: [
             {
-              offset: note.offset,
-              lane: note.lane,
+              offset: note.offset / resolution,
+              lane: note.lane + 1,
             },
             {
-              offset: note.offset + note.length,
-              lane: note.lane,
+              offset: (note.offset + note.length) / resolution,
+              lane: note.lane + 1,
             },
           ],
+          ...(note.swipe && { swipe: directions.indexOf(note.swipe) + 1 }),
         },
-        lane: note.lane,
+        lane: note.lane + 1,
+        ...(note.size && { size: note.size }),
       });
     }
   }

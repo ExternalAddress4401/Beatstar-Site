@@ -27,7 +27,7 @@
 
 .triple {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 3fr 1fr;
   align-items: center;
   width: 100%;
   justify-items: center;

@@ -75,6 +75,11 @@
     tls "^0.0.1"
     uuid "^9.0.0"
 
+"@fontsource/nunito@^4.5.11":
+  version "4.5.11"
+  resolved "https://registry.yarnpkg.com/@fontsource/nunito/-/nunito-4.5.11.tgz#0992075ddc3f3ed8e3e83bf5944b1b0efd4c24dd"
+  integrity sha512-j2WIvzsI+6wjbJ/gQjyHJL/SYZxyg1qomvRswMZAWj2lvv+eX4kzJOSbr9YhZLYywoMspYb0643EO4cHRy6zpQ==
+
 "@humanwhocodes/config-array@^0.10.5":
   version "0.10.7"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.10.7.tgz#6d53769fd0c222767e6452e8ebda825c22e9f0dc"

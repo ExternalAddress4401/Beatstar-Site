@@ -5,7 +5,7 @@ import UnderlineText from "./UnderlineText";
 interface ButtonProps {
   label: string;
   startIcon?: "upload";
-  endIcon?: "circle-question" | "check" | "x";
+  endIcon?: "circle-question" | "check" | "x" | "none";
   onClick: () => void;
 }
 

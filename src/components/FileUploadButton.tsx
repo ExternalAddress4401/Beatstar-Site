@@ -10,9 +10,6 @@ export default function FileUploadButton({ label }: ButtonProps) {
   const onClick = () => {
     let input = document.createElement("input");
     input.type = "file";
-    input.onchange = function (event) {
-      console.log(this.files);
-    };
     input.click();
   };
   return (

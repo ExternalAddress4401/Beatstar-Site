@@ -37,6 +37,12 @@ export default function Encrypt() {
   });
   const [errors, setErrors] = useState<string[] | null>(null);
 
+  const difficulties = {
+    Extreme: 1,
+    Hard: 3,
+    Normal: 4,
+  };
+
   const onInfoChange = (e: React.FormEvent<HTMLInputElement>) => {
     switch (e.currentTarget.name) {
       case "title":
@@ -60,7 +66,7 @@ export default function Encrypt() {
       case "difficulty":
         setInfo({
           ...info,
-          difficulty: parseInt(e.currentTarget.value),
+          difficulty: difficulties[e.currentTarget.value],
         });
         break;
     }
@@ -146,38 +152,6 @@ export default function Encrypt() {
       document.body.appendChild(link);
       link.click();
     }
-
-    /*const uuid = uuidv4();
-
-    const finalChart = chart.data as Chart;
-    const protobufChart = buildChart(finalChart); //chart as JSON in protobuf format
-
-    const numLanes =
-      protobufChart.notes.reduce(
-        (prev, curr) => (curr.lane > prev ? curr.lane : prev),
-        0
-      ) + 1;
-
-    const finalInfo: BuiltSongInfo = {
-      title: info.title,
-      artist: info.artist,
-      id: info.id,
-      difficulty: info.difficulty,
-      bpm: finalChart.syncTrack.find((el) => "change" in el).change,
-      sections: finalChart.sections.length,
-      maxScore: getMaxScore(finalChart, info.difficulty),
-      numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
-    };
-
-    //chart - done
-    //audio
-    //artwork
-    //info - done
-
-    //generate chart
-    const writer = new ProtobufWriter(protobufChart);
-    writer.build(ChartProto);
-    //chart is now in writer.buffer*/
   };
 
   return (
@@ -191,24 +165,24 @@ export default function Encrypt() {
           value={info.id}
           onChange={onInfoChange}
         />
-        <Select label="Difficulty" />
+        <Select label="Difficulty" onChange={onInfoChange} />
       </div>
 
       <div className={styles.group}>
         <Button
-          label={chart.name ? chart.name : "Chart"}
+          label={chart.name ? chart.name.slice(0, 22) + "..." : "Chart"}
           startIcon="upload"
           endIcon={chart.icon}
           onClick={() => openFileDialog("chart", ".chart")}
         />
         <Button
-          label={audio.name ? audio.name : "Audio"}
+          label={audio.name ? audio.name.slice(0, 22) + "..." : "Audio"}
           startIcon="upload"
           endIcon={audio.icon}
           onClick={() => openFileDialog("audio", ".wem")}
         />
         <Button
-          label={artwork.name ? artwork.name : "Artwork"}
+          label={artwork.name ? artwork.name.slice(0, 22) + "..." : "Artwork"}
           startIcon="upload"
           endIcon={artwork.icon}
           onClick={() => openFileDialog("artwork", ".png")}

@@ -3,7 +3,6 @@ import formidable from "formidable";
 import { promises as fs } from "fs";
 import { execFile } from "child_process";
 import { v4 as uuidv4 } from "uuid";
-import { createReadStream } from "fs";
 import { ProtobufReader, ChartProto } from "@externaladdress4401/protobuf";
 
 export const config = {
@@ -51,7 +50,10 @@ export default async function handler(
   res.end();
 }
 
-function parseForm(form: any, req: NextApiRequest) {
+function parseForm(
+  form: any,
+  req: NextApiRequest
+): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
       if (err) {

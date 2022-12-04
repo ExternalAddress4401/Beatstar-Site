@@ -1,4 +1,5 @@
 import { adjustBpms } from "./ChartUtils";
+import { effects } from "./Effects";
 
 interface Info {
   offset?: number;
@@ -22,9 +23,9 @@ export interface Size {
   multiplier: number;
 }
 
-interface Effect {
+export interface Effect {
   offset: number;
-  effect: string;
+  effects: number[];
 }
 
 export interface Chart {
@@ -35,10 +36,10 @@ export interface Chart {
   perfectSizes: Size[];
   speeds: Size[];
   errors: string[];
-  effects: Effect[];
+  effects: Record<number, number[]>;
 }
 
-interface Note {
+export interface Note {
   offset: number;
   length: number;
   lane: number;
@@ -86,7 +87,7 @@ export function readChart(chart: string) {
     perfectSizes: [],
     speeds: [],
     errors: [],
-    effects: [],
+    effects: {},
   };
 
   const data = chart.split("\r\n").join("").split("}");
@@ -106,7 +107,6 @@ export function readChart(chart: string) {
       case "[SyncTrack]":
         for (const property of data.split("  ").filter(Boolean)) {
           const { offset, values } = splitRow(property);
-          console.log(offset, values);
           if (values[0] === "B") {
             parsedChart.bpms.push({
               offset,
@@ -116,10 +116,18 @@ export function readChart(chart: string) {
         }
         break;
       case "[Events]":
-        for (const property of data.split("  ")) {
+        for (const property of data.trim().split("  ").filter(Boolean)) {
           const { offset, values } = splitRow(property);
           if (values[1] === "section") {
             parsedChart.sections.push(offset);
+          } else {
+            if (!parsedChart.effects[offset]) {
+              parsedChart.effects[offset] = [];
+            }
+
+            parsedChart.effects[offset].push(
+              effects.find((effect) => effect.idLabel === values[1]).id
+            );
           }
         }
         break;
@@ -135,7 +143,6 @@ export function readChart(chart: string) {
           } else if (values[0] === "E") {
             const events = values[1].split(",");
             for (const event of events) {
-              //add support for s0.1 and p0.1...
               if (event.startsWith("/")) {
                 const size = parseInt(event.slice(-1));
                 const note = getNote(parsedChart.notes, offset);
@@ -148,6 +155,16 @@ export function readChart(chart: string) {
                 }
 
                 note.size = size;
+              } else if (event.startsWith("s")) {
+                parsedChart.speeds.push({
+                  offset,
+                  multiplier: parseFloat(event.slice(1)),
+                });
+              } else if (event.startsWith("p")) {
+                parsedChart.perfectSizes.push({
+                  offset,
+                  multiplier: parseFloat(event.slice(1)),
+                });
               } else {
                 const direction = event.slice(0, -1) as Direction;
                 const lane = parseInt(event.trim().slice(-1));
@@ -168,14 +185,18 @@ export function readChart(chart: string) {
         break;
     }
   }
-  console.log(parsedChart);
+
   adjustBpms(parsedChart);
-  console.log(parsedChart);
   return parsedChart;
 }
 
 export function readBytes(json: any) {
   const resolution = 192;
+
+  const effects = {};
+  for (const effect of json.effects) {
+    effects[effect.offset * resolution] = effect.effects;
+  }
 
   const parsedChart: Chart = {
     info: {
@@ -187,38 +208,38 @@ export function readBytes(json: any) {
     ),
     perfectSizes: json.perfectSizes.map((size: Size) => {
       return {
-        offset: size.offset ? Math.round(size.offset * 192) : 0,
+        offset: size.offset ? Math.round(size.offset * resolution) : 0,
         multiplier: size.multiplier,
       };
     }),
     speeds: json.speeds.map((speed: Size) => {
       return {
-        offset: speed.offset ? Math.round(speed.offset * 192) : 0,
+        offset: speed.offset ? Math.round(speed.offset * resolution) : 0,
         multiplier: speed.multiplier,
       };
     }),
     notes: [],
     errors: [],
-    effects: [],
+    effects,
   };
 
   const directions: Direction[] = ["u", "d", "l", "r"];
 
   for (const note of json.notes) {
-    console.log(note);
     if (note.note_type === 1) {
       const offset = Math.round(note.single.note.offset * resolution);
-      const lane = note.lane - 1;
+      const lane = note.single ? note.single.note.lane : note.long.note.lane;
 
       parsedChart.notes.push({
         offset,
         lane,
         length: 0,
         swipe: note.single.swipe ? directions[note.single.swipe - 1] : null,
+        size: note.size ?? null,
       });
     } else if (note.note_type === 2) {
       const offset = Math.round(note.long.note[0].offset * resolution);
-      const lane = note.lane - 1;
+      const lane = note.lane;
       const length = Math.round(
         (note.long.note[1].offset - note.long.note[0].offset) * resolution
       );
@@ -228,6 +249,7 @@ export function readBytes(json: any) {
         lane,
         length,
         swipe: note.long.swipe ? directions[note.long.swipe - 1] : null,
+        size: note.size ?? null,
       });
     }
   }

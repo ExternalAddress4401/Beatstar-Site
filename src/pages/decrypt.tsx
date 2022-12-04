@@ -39,7 +39,6 @@ export default function decrypt() {
     input.type = "file";
     input.accept = ".bundle";
     input.onchange = async function () {
-      const file = input.files[0];
       const formData = new FormData();
       formData.append("chart", input.files[0]);
 

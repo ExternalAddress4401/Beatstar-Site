@@ -1,4 +1,5 @@
-import { Chart, BPM } from "./ChartReader";
+import { BytesNote } from "./ChartBuilder";
+import { Chart, BPM, Note } from "./ChartReader";
 
 export function getMaxScore(chart: Chart, difficulty: number) {
   let score = 0;
@@ -41,12 +42,19 @@ export function getMaxScore(chart: Chart, difficulty: number) {
   }
 
   const holdTickCount = chart.notes.reduce(function (prev, note) {
-    return note.length === 0
-      ? 0
-      : Math.floor(
-          Math.floor((note.offset + note.length) / chart.info.resolution) -
-            Math.floor(note.offset / chart.info.resolution)
-        );
+    const isHoldSwipe = note.length && note.swipe;
+    if (isHoldSwipe && note.length % chart.info.resolution === 0) {
+      prev--;
+    }
+    return (
+      prev +
+      (note.length === 0
+        ? 0
+        : Math.floor(
+            Math.floor((note.offset + note.length) / chart.info.resolution) -
+              Math.floor(note.offset / chart.info.resolution)
+          ))
+    );
   }, 0);
 
   score += holdTickCount * (250 * 0.2);
@@ -68,11 +76,7 @@ export function adjustBpms(chart: Chart) {
   let startingBpm = bpms[0];
   let sectionAdjustment = 0;
 
-  const adjustedSections = [];
-
-  let adjustedEffects = [];
-
-  const newEffects = {};
+  const adjustedEffects = {};
 
   //first we adjust each note by the BPM change
   for (var x = 1; x < bpms.length; x++) {
@@ -96,9 +100,9 @@ export function adjustBpms(chart: Chart) {
     let relevantSections = sections.filter(
       (el) => el > currentBpm.offset && el <= nextBpm.offset
     );
-    let relevantEffects = effects.filter(
-      (el) => el.offset > currentBpm.offset && el.offset <= nextBpm.offset
-    );
+    let relevantEffects = Object.keys(effects)
+      .filter((el: any) => el > currentBpm.offset && el <= nextBpm.offset)
+      .map((el) => parseFloat(el));
     let relevantPerfects = perfects.filter(
       (el) => el.offset > currentBpm.offset && el.offset <= nextBpm.offset
     );
@@ -124,7 +128,6 @@ export function adjustBpms(chart: Chart) {
         note.length = note.adjustedEnd - note.adjustedStart;
       }
     }
-    console.log("after", relevantNotes);
     for (const section of relevantSections) {
       let adjustingValue =
         (section - currentBpm.offset) / resolution / bpmMultiplier;
@@ -135,22 +138,16 @@ export function adjustBpms(chart: Chart) {
           : el
       );
     }
-    /*for (const effect of relevantEffects) {
-        let adjustingValue =
-          (effect.offset - currentBpm.offset) / resolution / bpmMultiplier;
+    for (const effect of relevantEffects) {
+      let adjustingValue =
+        (effect - currentBpm.offset) / resolution / bpmMultiplier;
 
-        effects = effects.map((el) =>
-          el == effect
-            ? currentBpm.offset -
-              sectionAdjustment * 192 +
-              adjustingValue * 192
-            : el
-        );
-
-        adjustedEffects.push(
-          currentBpm.offset - sectionAdjustment * 192 + adjustingValue * 192
-        );
-      }*/
+      adjustedEffects[
+        currentBpm.offset -
+          sectionAdjustment * resolution +
+          adjustingValue * resolution
+      ] = effects[effect];
+    }
     for (const perfect of relevantPerfects) {
       let adjustingValue =
         (perfect.offset - currentBpm.offset) / resolution / bpmMultiplier;
@@ -172,13 +169,8 @@ export function adjustBpms(chart: Chart) {
     note.offset = note.adjustedStart ? note.adjustedStart : note.offset;
   }
 
-  const effectKeys = Object.keys(effects);
-  adjustedEffects = adjustedEffects.length ? adjustedEffects : effects;
-  const adjustedEffectsKeys = Object.keys(adjustedEffects);
-  for (var i = 0; i < effectKeys.length; i++) {
-    newEffects[adjustedEffectsKeys[i]] = effects[effectKeys[i]];
-  }
-
   chart.sections = sections;
-  //chart.effects = newEffects;
+  chart.effects = Object.keys(adjustedEffects).length
+    ? adjustedEffects
+    : effects;
 }
