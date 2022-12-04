@@ -42,7 +42,10 @@ export default async function handler(
     });
 }
 
-function parseForm(form: any, req: NextApiRequest) {
+function parseForm(
+  form: any,
+  req: NextApiRequest
+): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
       if (err) {
@@ -57,9 +60,13 @@ function parseForm(form: any, req: NextApiRequest) {
 }
 
 async function extractAudio(uuid: string) {
+  const fileName =
+    process.platform === "linux"
+      ? "UnityAssetReplacer"
+      : "UnityAssetReplacer.exe";
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      "tools/replacer/UnityAssetReplacer.exe",
+      `tools/replacer/${fileName}`,
       ["-b", `./${uuid}/audio.bundle`, "-d", `./${uuid}`, "-m", "m_Script"],
       async function (a1, a2, a3) {
         await fs.rename(`./${uuid}/TST00026`, `./${uuid}/TST00026.bnk`);
@@ -69,9 +76,10 @@ async function extractAudio(uuid: string) {
   });
 }
 async function extractWem(uuid: string) {
+  const fileName = process.platform === "linux" ? "wwiseutil" : "wwiseutil.exe";
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      "tools/bnk/wwiseutil.exe",
+      `tools/bnk/${fileName}`,
       ["-u", "-f", `./${uuid}/TST00026.bnk`, "-o", `./${uuid}`],
       async function (a1, a2, a3) {
         resolve();
@@ -81,9 +89,10 @@ async function extractWem(uuid: string) {
 }
 
 async function convertAudio(uuid: string) {
+  const fileName = process.platform === "linux" ? "ww2ogg" : "ww2ogg.exe";
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      "tools/ww2ogg/ww2ogg",
+      `tools/ww2ogg/${fileName}`,
       [`${uuid}/1.wem`, "--pcb", "packed_codebooks_aoTuV_603.bin"],
       function (a1, a2, a3) {
         resolve();

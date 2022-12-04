@@ -144,12 +144,16 @@ async function buildDirectoryStructure(uuid: string) {
 }
 
 async function replaceChart(uuid: string) {
+  const fileName =
+    process.platform === "linux"
+      ? "UnityAssetReplacer"
+      : "UnityAssetReplacer.exe";
   const newContainerName = uuidv4().replaceAll("-", "");
   const container = /0207725071a623d62e45b4a33e9c7b85/g;
 
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      "tools/replacer/UnityAssetReplacer.exe",
+      `tools/replacer/${fileName}`,
       [
         "-b",
         "original/chart.bundle",
@@ -176,12 +180,16 @@ async function replaceChart(uuid: string) {
 }
 
 async function replaceArtwork(uuid: string) {
+  const fileName =
+    process.platform === "linux"
+      ? "UnityAssetReplacer"
+      : "UnityAssetReplacer.exe";
   const newContainerName = uuidv4().replaceAll("-", "");
   const container = /a317cdbf067bab183d6dd12d870c1303/g;
 
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      "tools/replacer/UnityAssetReplacer.exe",
+      `tools/replacer/${fileName}`,
       [
         "-b",
         "original/artwork.bundle",
@@ -207,12 +215,17 @@ async function replaceArtwork(uuid: string) {
 }
 
 async function replaceAudio(uuid: string) {
+  const fileName = process.platform === "linux" ? "wwiseutil" : "wwiseutil.exe";
+  const replacerName =
+    process.platform === "linux"
+      ? "UnityAssetReplacer"
+      : "UnityAssetReplacer.exe";
   const newContainerName = uuidv4().replaceAll("-", "");
   const container = /f742e8322104e675c6e8a37ba2cebb96/g;
 
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      "tools/bnk/wwiseutil.exe",
+      `tools/bnk/${fileName}`,
       [
         "-f",
         "original/audio.bnk",
@@ -228,7 +241,7 @@ async function replaceAudio(uuid: string) {
         }
         //BNK has been replaced
         execFile(
-          "tools/replacer/UnityAssetReplacer.exe",
+          `tools/replacer/${replacerName}`,
           [
             "-b",
             "original/audio.bundle",
