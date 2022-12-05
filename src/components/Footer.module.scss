@@ -7,15 +7,36 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  overflow: auto;
+}
+
+.expanded {
+  max-height: 20vh;
+  flex-direction: column;
+}
+
+.center {
+  align-items: center;
 }
 
 .content {
   margin-left: 1rem;
   display: flex;
-  align-items: center;
   gap: 1rem;
 }
 
 .icon {
   cursor: pointer;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.error {
+  margin: 0;
 }

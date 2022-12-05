@@ -10,7 +10,7 @@ import { isPng } from "../utils/isPng";
 import Footer from "../components/Footer";
 import UploadProps from "../interfaces/UploadProps";
 import { v4 as uuidv4 } from "uuid";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import BasicLoader from "../components/BasicLoader";
 
 export interface SongInfo {

@@ -54,7 +54,7 @@ export default async function handler(
     await fs.rename(files.chart.filepath, `./${uuid}/chart/508`);
 
     //convert the chart to beatstars format
-    const chart = await parseChart(uuid);
+    const chart = await parseChart(uuid, info.difficulty);
 
     const numLanes = chart.notes.reduce(
       (prev, curr) => (curr.lane > prev ? curr.lane : prev),
@@ -133,10 +133,44 @@ function parseForm(
   });
 }
 
-async function parseChart(uuid: string) {
+async function parseChart(uuid: string, difficulty: number) {
   const chart: Chart = readChart(
     (await fs.readFile(`./${uuid}/chart/508`)).toString()
   );
+
+  // for now we'll add in the default speeds and perfect sizes here
+
+  const difficultyTable = {
+    1: {
+      speeds: [0.6, 0.55, 0.5, 0.5, 0.45],
+      perfectSizes: [0.9, 0.8, 0.7, 0.6, 0.6],
+    },
+    3: {
+      speeds: [0.7, 0.6, 0.55, 0.5, 0.45],
+      perfectSizes: [0.9, 0.8, 0.7, 0.6, 0.6],
+    },
+    4: {
+      speeds: [0.8, 0.7, 0.6, 0.55, 0.5],
+      perfectSizes: [1, 0.9, 0.8, 0.7, 0.6],
+    },
+  };
+
+  const relevantTableEntry = difficultyTable[difficulty];
+
+  // no user set speeds were found
+  if (!chart.speeds.length) {
+    chart.speeds = chart.sections.map((section, index) => ({
+      offset: section,
+      multiplier: relevantTableEntry.speeds[index],
+    }));
+  }
+  // no user set perfect sizes were found
+  if (!chart.perfectSizes.length) {
+    chart.perfectSizes = chart.sections.map((section, index) => ({
+      offset: section,
+      multiplier: relevantTableEntry.perfectSizes[index],
+    }));
+  }
 
   try {
     const writer = new ProtobufWriter(buildChart(chart));

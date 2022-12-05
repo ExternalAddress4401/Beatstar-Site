@@ -75,7 +75,7 @@ export default function Decrypt() {
           <Button label="Audio" onClick={openAudioDialog} />
         </div>
       )}
-      <Footer errors={error} />
+      <Footer errors={error} onClose={() => setError(null)} />
     </div>
   );
 }

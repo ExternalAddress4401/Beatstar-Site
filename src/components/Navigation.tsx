@@ -5,7 +5,7 @@ export default function Navigation() {
   return (
     <div className={styles.tabs}>
       <Link href="/">
-        <img className={styles.logo} src="images/logo.png" />
+        <img className={styles.logo} src="/images/logo.png" />
       </Link>
       <Link href="/encrypt">
         <div className={styles.redTab}>Encrypt</div>
@@ -13,8 +13,11 @@ export default function Navigation() {
       <Link href="/decrypt">
         <div className={styles.yellowTab}>Decrypt</div>
       </Link>
-      <Link href="/leaderboard">
+      {/*<Link href="/leaderboard">
         <div className={styles.greenTab}>Leaderboard</div>
+      </Link>*/}
+      <Link href="/help">
+        <div className={styles.greenTab}>Help</div>
       </Link>
       <Link href="/news">
         <div className={styles.blueTab}>News</div>

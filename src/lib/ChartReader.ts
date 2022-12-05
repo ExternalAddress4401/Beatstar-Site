@@ -1,5 +1,6 @@
 import { adjustBpms } from "./ChartUtils";
 import { effects } from "./Effects";
+import { insertAt } from "../utils/insertAt";
 
 interface Info {
   offset?: number;
@@ -158,12 +159,16 @@ export function readChart(chart: string) {
               } else if (event.startsWith("s")) {
                 parsedChart.speeds.push({
                   offset,
-                  multiplier: parseFloat(event.slice(1)),
+                  multiplier: parseFloat(
+                    insertAt(event.slice(1), ".", event.slice(1).length - 2)
+                  ),
                 });
               } else if (event.startsWith("p")) {
                 parsedChart.perfectSizes.push({
                   offset,
-                  multiplier: parseFloat(event.slice(1)),
+                  multiplier: parseFloat(
+                    insertAt(event.slice(1), ".", event.slice(1).length - 2)
+                  ),
                 });
               } else {
                 const direction = event.slice(0, -1) as Direction;
@@ -184,6 +189,18 @@ export function readChart(chart: string) {
         }
         break;
     }
+  }
+
+  if (!parsedChart.sections.length) {
+    parsedChart.errors.push(
+      "No sections were found. Add at least 1 in Moonscraper."
+    );
+  }
+
+  if (parsedChart.sections.length > 5) {
+    parsedChart.errors.push(
+      `Only 5 sections are supported. Your chart has ${parsedChart.sections.length} sections.`
+    );
   }
 
   adjustBpms(parsedChart);
