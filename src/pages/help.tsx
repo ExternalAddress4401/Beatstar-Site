@@ -15,7 +15,7 @@ export default function Help() {
       </Link>
       <Link href="/help/long">
         <a className={styles.link}>
-          Why can't I place notes next to long notes?
+          Why can&apos;t I place notes next to long notes?
         </a>
       </Link>
       <Link href="/help/sections">

@@ -36,7 +36,11 @@ export default function Footer({ errors, onClose }: FooterProps) {
           </p>
         </div>
         {isExpanded
-          ? errors.map((error) => <p className={styles.error}>{error}</p>)
+          ? errors.map((error) => (
+              <p key={error} className={styles.error}>
+                {error}
+              </p>
+            ))
           : errors[0]}
       </div>
     </div>

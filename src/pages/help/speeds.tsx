@@ -81,7 +81,7 @@ export default function Speeds() {
       </div>
       <p>
         If you do not place any speed events in your chart the above values will
-        be used based on the difficulty you've chosen.
+        be used based on the difficulty you&apos;ve chosen.
       </p>
       <div>
         If you place at least 1 event only the events you have placed will be

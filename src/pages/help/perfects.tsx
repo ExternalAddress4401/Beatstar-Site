@@ -84,7 +84,7 @@ export default function Perfects() {
       </div>
       <p>
         If you do not place any pefect size events in your chart the above
-        values will be used based on the difficulty you've chosen.
+        values will be used based on the difficulty you&apos;ve chosen.
       </p>
       <div>
         If you place at least 1 event only the events you have placed will be
