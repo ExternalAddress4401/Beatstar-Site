@@ -199,7 +199,7 @@ export async function getServerSideProps(context) {
     }
     if (note.size === 1) {
       note.size = c.notes[i - 1].size;
-      note.pushAhead = true;
+      //note.pushAhead = true;
       continue;
     } else if (note.size === 2) {
       //???
@@ -216,7 +216,7 @@ export async function getServerSideProps(context) {
     } else if (nextInLane?.offset - note.offset === 96) {
       note.size = 6;
       nextInLane.size = 6;
-      note.pushAhead = true;
+      //note.pushAhead = true;
     } else {
       note.size = 12;
     }
