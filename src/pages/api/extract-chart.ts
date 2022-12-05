@@ -68,9 +68,13 @@ function parseForm(
 }
 
 async function extractChart(uuid: string) {
+  const fileName =
+    process.platform === "linux"
+      ? "UnityAssetReplacer"
+      : "UnityAssetReplacer.exe";
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      "tools/replacer/UnityAssetReplacer.exe",
+      `tools/replacer/${fileName}`,
       ["-b", `./${uuid}/chart.bundle`, "-d", `./${uuid}`, "-m", "m_Script"],
       async function (a1, a2, a3) {
         console.log(a1, a2, a3);
