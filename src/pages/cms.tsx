@@ -66,7 +66,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      cms,
+      cms: cms.slice(0, 12),
     },
   };
 }
