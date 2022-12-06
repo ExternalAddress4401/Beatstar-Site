@@ -15,25 +15,44 @@ export default function NewsArticle({
   image,
   content,
 }: NewsArticleProps) {
-  content = content.replace(/<align=".*?">(.*?)<\/align>/g, `$1`);
-  content = content.replace(/<\/style>/g, "</span>");
-  content = content.replace(/<\/color>/g, "</span>");
-  content = content.replace(/<\/link>/g, "</a>");
-  content = content.replace(/<color=(#.{6})>/g, `<span style="color: $1;>`);
-  content = content.replace(/<link=".*?">/g, "<a>");
+  const stack = [];
 
-  //content = content.replace(
-  //  ,
-  //  `<span className=${`$1` === "Bold" ? bold : italic}>`
-  //);
-
-  let match;
-  while ((match = /<style="(.*?)">/g.exec(content))) {
-    content = content.replace(
-      /<style="(.*?)">/,
-      `<span className=${styles[match[1]]}>`
-    );
+  const matches = content.match(/<.*?>/g);
+  for (const match of matches) {
+    if (match.includes("</")) {
+      content = content.replace(match, stack.pop());
+    } else if (match.includes("<align")) {
+      content = content.replace(match, '<span style="text-align: center">');
+      stack.push("</span>");
+    } else if (match.includes("Italic")) {
+      content = content.replace(match, '<span style="font-style: italic">');
+      stack.push("</span>");
+    } else if (match.includes("Bold")) {
+      content = content.replace(match, '<span style="font-weight: bold">');
+      stack.push("</span>");
+    } else if (match.includes("Link")) {
+      content = content.replace(match, "");
+      stack.push("");
+    } else if (match.includes("color")) {
+      content = content.replace(
+        match,
+        `<span style="color: ${match.slice(7, -1)}">`
+      );
+      stack.push("</span>");
+    } else if (match.includes("link")) {
+      content = content.replace(match, "");
+      stack.push("</span>");
+    } else if (match.includes("H1")) {
+      content = content.replace(match, "<h1>");
+      stack.push("</h1>");
+    } else if (match.includes("H2")) {
+      content = content.replace(match, "<h2>");
+      stack.push("</h2>");
+    }
   }
+
+  console.log(content);
+
   return (
     <div className={styles.article}>
       <h2>{title}</h2>
