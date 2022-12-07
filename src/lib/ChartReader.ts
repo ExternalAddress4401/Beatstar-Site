@@ -240,7 +240,7 @@ export function readBytes(json: any) {
     effects,
   };
 
-  const directions: Direction[] = ["u", "d", "l", "r"];
+  const directions: Direction[] = ["u", "d", "l", "r", "ul", "ur", "dl", "dr"];
 
   for (const note of json.notes) {
     if (note.note_type === 1) {
