@@ -70,7 +70,7 @@ export default function Decrypt() {
         <div className={styles.center}>
           <TextArea text={JSON.stringify(json, null, 2)} />
           {hasSwitchHold ? (
-            <div>This chart has a switch hold which isn't supported.</div>
+            <div>This chart has a switch hold which isn&apos;t supported.</div>
           ) : (
             <Button label="Download" onClick={onDownload} />
           )}
