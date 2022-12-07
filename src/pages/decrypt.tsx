@@ -10,6 +10,7 @@ import axios from "axios";
 export default function Decrypt() {
   const [json, setJson] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasSwitchHold, setHasSwitchHold] = useState<boolean>(false);
 
   const openAudioDialog = () => {
     let input = document.createElement("input");
@@ -45,6 +46,7 @@ export default function Decrypt() {
       const response = await axios.post("/api/extract-chart", formData);
       const data = response.data;
 
+      setHasSwitchHold(data.notes.find((note) => note.note_type === 5));
       setJson(data);
     };
     input.click();
@@ -67,7 +69,11 @@ export default function Decrypt() {
       {json ? (
         <div className={styles.center}>
           <TextArea text={JSON.stringify(json, null, 2)} />
-          <Button label="Download" onClick={onDownload} />
+          {hasSwitchHold ? (
+            <div>This chart has a switch hold which isn't supported.</div>
+          ) : (
+            <Button label="Download" onClick={onDownload} />
+          )}
         </div>
       ) : (
         <div className={styles.buttonContainer}>
