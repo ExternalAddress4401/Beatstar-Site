@@ -56,13 +56,13 @@ export default function Song({ idLabel, chartData }: SongProps) {
       <div>Perfect sizes: </div>
       <ul>
         {chartData.perfectSizes.map((el) => (
-          <li>{roundToPlaces(el.multiplier, 2)}</li>
+          <li key={el.offset}>{roundToPlaces(el.multiplier, 2)}</li>
         ))}
       </ul>
       <div>Speeds: </div>
       <ul>
         {chartData.speeds.map((el) => (
-          <li>{roundToPlaces(el.multiplier, 2)}</li>
+          <li key={el.offset}>{roundToPlaces(el.multiplier, 2)}</li>
         ))}
       </ul>
     </div>
