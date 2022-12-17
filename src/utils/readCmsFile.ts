@@ -16,6 +16,7 @@ import {
   CMSRequester,
 } from "@externaladdress4401/protobuf";
 import { decompress } from "./decompress";
+import { promises as fs } from "fs";
 
 export type CMSFileName =
   | "GameConfig"
@@ -33,55 +34,61 @@ export type CMSFileName =
 
 export async function readCmsFile(name: CMSFileName) {
   const { url } = (await CMSRequester.getCMS()).find((el) => el.name === name);
-  const data = await decompress(
-    (
-      await axios.get(url, { responseType: "arraybuffer" })
-    ).data
-  );
+  const version = url.split("?")[0].split("/")[7];
 
-  const reader = new ProtobufReader(data);
+  let cmsData;
+  try {
+    cmsData = await fs.readFile(`./cache/${name}/${version}`);
+  } catch (e) {
+    cmsData = await decompress(
+      (
+        await axios.get(url, { responseType: "arraybuffer" })
+      ).data
+    );
+    await fs.writeFile(`./cache/${name}/${version}`, cmsData);
+  }
+
+  const reader = new ProtobufReader(cmsData);
   reader.process();
-
-  let parsed;
 
   switch (name) {
     case "GameConfig":
-      parsed = reader.parseProto(GameConfigProto);
+      cmsData = reader.parseProto(GameConfigProto);
       break;
     case "LangConfig":
-      parsed = reader.parseProto(LangProto);
+      cmsData = reader.parseProto(LangProto);
       break;
     case "AssetsPatchConfig":
-      parsed = reader.parseProto(AssetsPatchProto);
+      cmsData = reader.parseProto(AssetsPatchProto);
       break;
     case "AudioConfig":
-      parsed = reader.parseProto(AudioConfigProto);
+      cmsData = reader.parseProto(AudioConfigProto);
       break;
     case "NewsFeed":
-      parsed = reader.parseProto(NewsProto);
+      cmsData = reader.parseProto(NewsProto);
       break;
     case "ScalingConfig":
-      parsed = reader.parseProto(ScalingConfig);
+      cmsData = reader.parseProto(ScalingConfig);
       break;
     case "NotificationConfig":
-      parsed = reader.parseProto(NotificationConfigProto);
+      cmsData = reader.parseProto(NotificationConfigProto);
       break;
     case "FontFallbackConfig":
-      parsed = reader.parseProto(FontFallbackConfigProto);
+      cmsData = reader.parseProto(FontFallbackConfigProto);
       break;
     case "LiveOpsBundleConfig":
-      parsed = reader.parseProto(LiveOpsBundleConfigProto);
+      cmsData = reader.parseProto(LiveOpsBundleConfigProto);
       break;
     case "LiveOpsEventConfig":
-      parsed = reader.parseProto(LiveOpsEventProto);
+      cmsData = reader.parseProto(LiveOpsEventProto);
       break;
     case "LiveOpsDeeplinkRewardConfig":
-      parsed = reader.parseProto(LiveOpsDeeplinkRewardConfigProto);
+      cmsData = reader.parseProto(LiveOpsDeeplinkRewardConfigProto);
       break;
     case "SongConfig":
-      parsed = reader.parseProto(SongConfigProto);
+      cmsData = reader.parseProto(SongConfigProto);
       break;
   }
 
-  return parsed;
+  return cmsData;
 }

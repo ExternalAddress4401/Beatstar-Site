@@ -1,5 +1,6 @@
 import NewsArticle from "../components/NewsArticle";
 import { readCmsFile } from "../utils/readCmsFile";
+import Image from "next/image";
 
 import styles from "./news.module.scss";
 

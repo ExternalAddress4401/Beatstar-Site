@@ -46,7 +46,7 @@ export default function Decrypt() {
       const response = await axios.post("/api/extract-chart", formData);
       const data = response.data;
 
-      setHasSwitchHold(data.notes.find((note) => note.note_type === 5));
+      //setHasSwitchHold(data.notes.find((note) => note.note_type === 5));
       setJson(data);
     };
     input.click();

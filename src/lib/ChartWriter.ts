@@ -22,29 +22,34 @@ export function writeChart(chart: Chart) {
   chartString += "}\r\n[ExpertSingle]\r\n{\r\n";
 
   for (const note of chart.notes) {
-    chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
-    if (note.swipe) {
-      chartString += `  ${
-        note.length ? note.offset + note.length : note.offset
-      } = E ${note.swipe}${note.lane}\r\n`;
-    }
-    if (note.size) {
-      chartString += `  ${note.offset} = E /${note.size}\r\n`;
+    if (note.switches) {
+      chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
+      for (const s of note.switches) {
+        chartString += `  ${s.offset} = E h${note.lane}>${s.lane}\r\n`;
+      }
+    } else {
+      chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
+      if (note.swipe) {
+        chartString += `  ${
+          note.length ? note.offset + note.length : note.offset
+        } = E ${note.swipe}${note.lane}\r\n`;
+      }
+      if (note.size) {
+        chartString += `  ${note.offset} = E /${note.size}\r\n`;
+      }
     }
   }
 
   for (const perfectSize of chart.perfectSizes) {
-    chartString += `  ${perfectSize.offset} = E p${roundToPlaces(
-      perfectSize.multiplier,
-      2
-    )}\r\n`;
+    const size = roundToPlaces(perfectSize.multiplier, 2)
+      .toString()
+      .replace(".", "");
+    chartString += `  ${perfectSize.offset} = E p${size}\r\n`;
   }
 
   for (const speed of chart.speeds) {
-    chartString += `  ${speed.offset} = E s${roundToPlaces(
-      speed.multiplier,
-      2
-    )}\r\n`;
+    const spd = roundToPlaces(speed.multiplier, 2).toString().replace(".", "");
+    chartString += `  ${speed.offset} = E s${spd}\r\n`;
   }
 
   chartString += "}";

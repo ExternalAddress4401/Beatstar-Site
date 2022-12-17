@@ -78,6 +78,7 @@ export default async function handler(
           sections: chart.sections.length,
           maxScore: getMaxScore(chart, info.difficulty),
           numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
+          type: info.type,
         };
 
         const zip = new JSZip();

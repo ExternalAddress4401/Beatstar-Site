@@ -69,7 +69,11 @@ async function extractAudio(uuid: string) {
       `tools/replacer/${fileName}`,
       ["-b", `./${uuid}/audio.bundle`, "-d", `./${uuid}`, "-m", "m_Script"],
       async function (a1, a2, a3) {
-        await fs.rename(`./${uuid}/TST00026`, `./${uuid}/TST00026.bnk`);
+        const file = (await fs.readdir(`./${uuid}`)).filter(
+          (file) => !file.endsWith(".bundle")
+        )[0];
+        console.log(a1, a2, a3);
+        await fs.rename(`./${uuid}/${file}`, `./${uuid}/${file}.bnk`);
         resolve();
       }
     );
@@ -77,11 +81,15 @@ async function extractAudio(uuid: string) {
 }
 async function extractWem(uuid: string) {
   const fileName = process.platform === "linux" ? "wwiseutil" : "wwiseutil.exe";
+  const file = (await fs.readdir(`./${uuid}`)).filter(
+    (file) => !file.endsWith(".bundle")
+  )[0];
   return new Promise<void>(function (resolve, reject) {
     execFile(
       `tools/bnk/${fileName}`,
-      ["-u", "-f", `./${uuid}/TST00026.bnk`, "-o", `./${uuid}`],
+      ["-u", "-f", `./${uuid}/${file}`, "-o", `./${uuid}`],
       async function (a1, a2, a3) {
+        console.log(a1, a2, a3);
         resolve();
       }
     );
@@ -95,6 +103,7 @@ async function convertAudio(uuid: string) {
       `tools/ww2ogg/${fileName}`,
       [`${uuid}/1.wem`, "--pcb", "packed_codebooks_aoTuV_603.bin"],
       function (a1, a2, a3) {
+        console.log(a1, a2, a3);
         resolve();
       }
     );

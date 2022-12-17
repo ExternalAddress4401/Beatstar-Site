@@ -12,12 +12,14 @@ import UploadProps from "../interfaces/UploadProps";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import BasicLoader from "../components/BasicLoader";
+import Checkbox from "../components/Checkbox";
 
 export interface SongInfo {
   title: string;
   artist: string;
   id: number;
   difficulty: number;
+  type: string;
 }
 
 export default function Encrypt() {
@@ -35,6 +37,7 @@ export default function Encrypt() {
     artist: "",
     id: getRandomBetween(2000, 10000),
     difficulty: 1,
+    type: "Regular",
   });
   const [errors, setErrors] = useState<string[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -71,6 +74,11 @@ export default function Encrypt() {
           difficulty: difficulties[e.currentTarget.value],
         });
         break;
+      case "deluxe":
+        setInfo({
+          ...info,
+          type: e.currentTarget.checked ? "Promode" : "Regular",
+        });
     }
   };
 
@@ -200,6 +208,7 @@ export default function Encrypt() {
           onChange={onInfoChange}
         />
         <Select label="Difficulty" onChange={onInfoChange} />
+        <Checkbox label="Deluxe" onChange={onInfoChange} />
       </div>
 
       <div className={styles.group}>

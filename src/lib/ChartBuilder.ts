@@ -28,6 +28,12 @@ export interface BytesNote {
       lane: number;
     }[];
   };
+  note?: {
+    switchHold: {
+      offset: number;
+      lane: number;
+    }[];
+  };
   lane: number;
 }
 
@@ -63,7 +69,7 @@ export function buildChart(chart: Chart) {
   };
 
   for (const note of chart.notes) {
-    const noteType = note.length === 0 ? 1 : 2;
+    const noteType = note.switches ? 5 : note.length === 0 ? 1 : 2;
     if (noteType === 1) {
       finalChart.notes.push({
         note_type: 1,
@@ -92,6 +98,18 @@ export function buildChart(chart: Chart) {
             },
           ],
           ...(note.swipe && { swipe: directions.indexOf(note.swipe) + 1 }),
+        },
+        lane: note.lane + 1,
+        ...(note.size && { size: note.size }),
+      });
+    } else if (noteType === 5) {
+      finalChart.notes.push({
+        note_type: 5,
+        note: {
+          switchHold: note.switches.map((s) => ({
+            offset: s.offset / resolution,
+            lane: s.lane,
+          })),
         },
         lane: note.lane + 1,
         ...(note.size && { size: note.size }),

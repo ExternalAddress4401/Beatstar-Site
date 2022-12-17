@@ -25,6 +25,9 @@ export default function Navigation() {
       <Link href="/cms">
         <div className={styles.purpleTab}>CMS</div>
       </Link>
+      <Link href="/songs">
+        <div className={styles.orangeTab}>Songs</div>
+      </Link>
     </div>
   );
 }

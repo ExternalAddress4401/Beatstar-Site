@@ -51,7 +51,14 @@ export default function NewsArticle({
     }
   }
 
-  console.log(content);
+  content = content.replace(
+    /\[sprite=10\]/g,
+    `<img style="width: 20px; height: 20px" src='/images/extreme.png' />`
+  );
+  content = content.replace(
+    /\[sprite=9\]/g,
+    `<img style="width: 13px; height: 17px" src='/images/hard.png' />`
+  );
 
   return (
     <div className={styles.article}>

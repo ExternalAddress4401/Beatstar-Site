@@ -51,6 +51,9 @@
 .purpleTab {
   @include tabAfter(magenta);
 }
+.orangeTab {
+  @include tabAfter(orange);
+}
 
 @keyframes underline {
   0% {

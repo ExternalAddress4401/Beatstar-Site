@@ -48,6 +48,10 @@ export interface Note {
   size?: number;
   adjustedStart?: number;
   adjustedEnd?: number;
+  switches?: {
+    offset: number;
+    lane: number;
+  }[];
 }
 
 type Direction = "u" | "d" | "l" | "r" | "ul" | "ur" | "dl" | "dr";
@@ -77,6 +81,10 @@ function getNote(notes: Note[], offset: number, lane?: number) {
       (note) => note.offset === offset || note.offset + note.length === offset
     );
   }
+}
+
+function getClosestNote(notes: Note[]) {
+  return notes[notes.length - 1];
 }
 
 export function readChart(chart: string) {
@@ -169,6 +177,19 @@ export function readChart(chart: string) {
                   multiplier: parseFloat(
                     insertAt(event.slice(1), ".", event.slice(1).length - 2)
                   ),
+                });
+              } else if (event.startsWith("h")) {
+                const s = event
+                  .slice(1)
+                  .split(">")
+                  .map((el) => parseInt(el));
+                const note = getClosestNote(parsedChart.notes);
+                if (!note.switches) {
+                  note.switches = [];
+                }
+                note.switches.push({
+                  offset,
+                  lane: s[1],
                 });
               } else {
                 const direction = event.slice(0, -1) as Direction;
@@ -267,6 +288,25 @@ export function readBytes(json: any) {
         length,
         swipe: note.long.swipe ? directions[note.long.swipe - 1] : null,
         size: note.size ?? null,
+      });
+    } else if (note.note_type === 5) {
+      const startOffset = Math.round(
+        note.note.switchHold[0].offset * resolution
+      );
+      const endOffset = Math.round(
+        note.note.switchHold[note.note.switchHold.length - 1].offset *
+          resolution
+      );
+      const lane = note.lane;
+
+      parsedChart.notes.push({
+        offset: startOffset,
+        lane,
+        length: endOffset - startOffset,
+        switches: note.note.switchHold.map((s) => ({
+          offset: Math.round(s.offset * resolution),
+          lane: s.lane,
+        })),
       });
     }
   }
