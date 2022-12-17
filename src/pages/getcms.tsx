@@ -8,7 +8,7 @@ export default function getcms({ cms }: getcmsprops) {
   return (
     <div>
       {cms.map((el) => (
-        <div>
+        <div key={el}>
           <div>{el}</div>
         </div>
       ))}

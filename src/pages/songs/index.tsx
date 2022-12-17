@@ -83,7 +83,7 @@ export default function Songs() {
             audio = { id: "unknown" };
           }
           return (
-            <tr>
+            <tr key={songId}>
               <td>
                 <LocalLink href={`/songs/${el.idLabel}`} label={title} />
               </td>

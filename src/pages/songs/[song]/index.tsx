@@ -78,7 +78,6 @@ export async function getServerSideProps(context: NextPageContext) {
     (asset) => asset.id === `interactions_${song.BeatmapVariantReference_id}`
   );
   const chartUrl = `https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/0/Android/${chart.id}_${chart.HashAndroid}${chart.CRCAndroid}.bundle`;
-  .log(chartUrl);
   const chartData = (await axios.get(chartUrl, { responseType: "arraybuffer" }))
     .data;
 
