@@ -1,11 +1,9 @@
 import { execFile } from "child_process";
 import { promises as fs } from "fs";
-import { v4 as uuidv4 } from "uuid";
 
-export async function extract(input) {
-  const job = uuidv4();
-  fs.mkdir(`./${job}`);
-  fs.writeFile(`./${job}/input.bundle`, input);
+export async function extract(jobId, input) {
+  fs.mkdir(`./${jobId}`);
+  fs.writeFile(`./${jobId}/input.bundle`, input);
 
   const fileName =
     process.platform === "linux"
@@ -15,18 +13,45 @@ export async function extract(input) {
   return new Promise(function (resolve, reject) {
     execFile(
       `tools/replacer/${fileName}`,
-      ["-b", `./${job}/input.bundle`, "-d", `./${job}`, "-m", "m_Script"],
+      ["-b", `./${jobId}/input.bundle`, "-d", `./${jobId}`, "-m", "m_Script"],
       async function (a1, a2, a3) {
+        console.log(a1, a2, a3);
         const data = await fs.readFile(
-          `./${job}/` +
+          `./${jobId}/` +
             (
-              await fs.readdir(`./${job}`)
+              await fs.readdir(`./${jobId}`)
             ).filter((file) => file !== "input.bundle")[0]
         );
 
-        fs.rm(`./${job}`, { recursive: true, force: true });
-
         resolve(data);
+      }
+    );
+  });
+}
+
+export async function extractTextures(jobId, input) {
+  fs.mkdir(`./${jobId}`);
+  fs.writeFile(`./${jobId}/input.bundle`, input);
+
+  const fileName =
+    process.platform === "linux"
+      ? "UnityAssetReplacer"
+      : "UnityAssetReplacer.exe";
+
+  return new Promise(function (resolve, reject) {
+    execFile(
+      `tools/replacer/${fileName}`,
+      ["-b", `./${jobId}/input.bundle`, "-t", "-d", `./${jobId}`],
+      async function (a1, a2, a3) {
+        console.log(a1, a2, a3);
+        const data = await fs.readFile(
+          `./${jobId}/` +
+            (
+              await fs.readdir(`./${jobId}`)
+            ).filter((file) => file.endsWith(".png"))[0]
+        );
+
+        resolve(data.toString("base64"));
       }
     );
   });

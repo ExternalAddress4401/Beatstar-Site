@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding-bottom: 1rem;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.end {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+
+  @media (min-width: 600px) {
+    justify-content: flex-end;
+  }
+}
+
+.link {
+  color: white;
+}

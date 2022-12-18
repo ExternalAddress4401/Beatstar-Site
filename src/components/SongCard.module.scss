@@ -1,0 +1,52 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgb(40, 40, 40);
+  width: 90%;
+  height: 70%;
+  padding: 1rem;
+  font-size: 20px;
+
+  @media (min-width: 600px) {
+    width: 600px;
+    height: 600px;
+  }
+}
+
+.titleColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.title {
+  margin: 0;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.sizeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.image {
+  border-radius: 50%;
+}

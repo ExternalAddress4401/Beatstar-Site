@@ -130,13 +130,20 @@ export function readChart(chart: string) {
           if (values[1] === "section") {
             parsedChart.sections.push(offset);
           } else {
+            const foundEffect = effects.find(
+              (effect) => effect.idLabel === values[1]
+            );
+            if (!foundEffect) {
+              parsedChart.errors.push(
+                `Unknown effect ${values[1]} found at offset ${offset}.`
+              );
+              continue;
+            }
             if (!parsedChart.effects[offset]) {
               parsedChart.effects[offset] = [];
             }
 
-            parsedChart.effects[offset].push(
-              effects.find((effect) => effect.idLabel === values[1]).id
-            );
+            parsedChart.effects[offset].push(foundEffect.id);
           }
         }
         break;

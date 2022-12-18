@@ -3,50 +3,23 @@ import axios from "axios";
 import styles from "./index.module.scss";
 import LocalLink from "../../components/LocalLink";
 import Input from "../../components/Input";
+import { useCache } from "../../hooks/useCache";
+import Image from "next/image";
+import BasicLoader from "../../components/BasicLoader";
+import SongRow from "../../components/SongRow";
+//import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function Songs() {
-  const [assets, setAssets] = useState(null);
-  const [songs, setSongs] = useState(null);
-  const [language, setLanguage] = useState(null);
+  const [assets, songs, language] = useCache();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  // const window = useWindowSize();
 
-  useEffect(() => {
-    async function fetchCms() {
-      if (sessionStorage.getItem("cachedSongs")) {
-        setAssets(JSON.parse(sessionStorage.getItem("cachedAssets")));
-        setSongs(JSON.parse(sessionStorage.getItem("cachedSongs")));
-        setLanguage(JSON.parse(sessionStorage.getItem("cachedLanguage")));
-      } else {
-        const assetsPatchConfig = (
-          await axios.post("/api/read-cms-file", {
-            name: "AssetsPatchConfig",
-          })
-        ).data;
-        const assetsConfig = assetsPatchConfig.assetBundles.filter(
-          (el) => el.id.includes("interactions") || el.id.includes("audiobank")
-        );
-        const songConfig = (
-          await axios.post("/api/read-cms-file", {
-            name: "SongConfig",
-          })
-        ).data;
-        const langConfig = (
-          await axios.post("/api/read-cms-file", {
-            name: "LangConfig",
-          })
-        ).data;
-        setAssets(assetsConfig);
-        setSongs(songConfig);
-        setLanguage(langConfig);
-        sessionStorage.setItem("cachedSongs", JSON.stringify(songConfig));
-        sessionStorage.setItem("cachedAssets", JSON.stringify(assetsConfig));
-        sessionStorage.setItem("cachedLanguage", JSON.stringify(langConfig));
-      }
-    }
-    fetchCms();
-  }, []);
   if (!assets || !songs) {
-    return <div></div>;
+    return (
+      <div className={styles.loader}>
+        <BasicLoader />
+      </div>
+    );
   }
   return (
     <div className={styles.content}>
@@ -54,9 +27,9 @@ export default function Songs() {
       <Input
         type="text"
         label="Search"
-        onChange={(e) => setSearchTerm(e.currentTarget.value)}
+        onChange={(e) => setSearchTerm(e.currentTarget.value.toLowerCase())}
       />
-      <table>
+      <div className={styles.table}>
         {songs.Beatmaps.map((el) => {
           const { songTitleLocId, songArtistLocId } = songs.Songs.find(
             (song) => song.id === el.Song_id
@@ -64,6 +37,10 @@ export default function Songs() {
           const title = language.strings.find(
             (el) => el.placeholder === songTitleLocId
           ).message.message;
+          const beatmapInfo = songs.BeatmapVariants.find(
+            (s) => s.Song_id === el.Song_id
+          );
+
           if (!title.toLowerCase().includes(searchTerm)) {
             return;
           }
@@ -72,10 +49,38 @@ export default function Songs() {
           ).message.message;
           const chartId = el.BeatmapVariantReference_id;
           const songId = el.Song_id;
+
           let chart = assets.find((el) => el.id === `interactions_${chartId}`);
           let audio = assets.find((el) =>
             el.id.startsWith(`${songId}_audiobank`)
           );
+          let difficulty = {
+            image: "",
+            width: 0,
+            height: 0,
+          };
+
+          const pro = beatmapInfo.Description
+            ? beatmapInfo.Description.toLowerCase().includes("pro")
+            : "";
+
+          switch (beatmapInfo.Difficulty_id) {
+            case 1:
+              difficulty = {
+                image: "/images/extreme.png",
+                width: 12,
+                height: 12,
+              };
+              break;
+            case 3:
+              difficulty = {
+                image: "/images/hard.png",
+                width: 9,
+                height: 13,
+              };
+              break;
+          }
+
           if (!chart) {
             chart = { id: "unknown" };
           }
@@ -83,31 +88,17 @@ export default function Songs() {
             audio = { id: "unknown" };
           }
           return (
-            <tr key={songId}>
-              <td>
-                <LocalLink href={`/songs/${el.idLabel}`} label={title} />
-              </td>
-              <td>{artist}</td>
-              <td>
-                <a
-                  className={styles.link}
-                  href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/0/Android/${audio.id}_${audio.HashAndroid}${audio.CRCAndroid}.bundle`}
-                >
-                  {audio.id === "unknown" ? "Unknown" : "Audio"}
-                </a>
-              </td>
-              <td>
-                <a
-                  className={styles.link}
-                  href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/0/Android/${chart.id}_${chart.HashAndroid}${chart.CRCAndroid}.bundle`}
-                >
-                  {chart.id === "unknown" ? "Unknown" : "Chart"}
-                </a>
-              </td>
-            </tr>
+            <SongRow
+              title={title + (pro ? " - PRO" : "")}
+              artist={artist}
+              idLabel={el.idLabel}
+              difficulty={difficulty}
+              audio={audio}
+              chart={chart}
+            />
           );
         })}
-      </table>
+      </div>
     </div>
   );
 }

@@ -5,15 +5,31 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  width: 100%;
   background-color: black;
+}
+
+.tabsMobile {
+  display: flex;
+  font-family: kiona;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: black;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 @mixin tabAfter($color) {
   cursor: pointer;
   display: inline-block;
   position: relative;
-  top: 13px;
+  top: 0px;
+  padding-bottom: 0.5rem;
+
+  @media (min-width: 600px) {
+    top: 13px;
+  }
 
   &:after {
     content: "";
@@ -68,4 +84,16 @@
   width: 50px;
   height: 50px;
   cursor: pointer;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+}
+
+.expanded {
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  align-items: center;
 }

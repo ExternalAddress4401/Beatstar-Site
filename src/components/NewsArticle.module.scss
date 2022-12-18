@@ -12,7 +12,11 @@
 
 .content {
   margin-left: 1rem;
-  width: 550px;
+  min-width: 90%;
+
+  @media (min-width: 600px) {
+    width: 550px;
+  }
 }
 
 .Bold {
