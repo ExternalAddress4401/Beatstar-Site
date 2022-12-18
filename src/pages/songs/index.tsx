@@ -89,6 +89,7 @@ export default function Songs() {
           }
           return (
             <SongRow
+              key={el.idLabel}
               title={title + (pro ? " - PRO" : "")}
               artist={artist}
               idLabel={el.idLabel}
