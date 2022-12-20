@@ -51,13 +51,13 @@ export function buildChart(chart: Chart) {
     perfectSizes: chart.perfectSizes.map((perfectSize) => {
       return {
         ...perfectSize,
-        offset: perfectSize.offset / resolution,
+        ...(perfectSize.offset && { offset: perfectSize.offset / resolution }),
       };
     }),
     speeds: chart.speeds.map((speed) => {
       return {
         ...speed,
-        offset: speed.offset / resolution,
+        ...(speed.offset && { offset: speed.offset / resolution }),
       };
     }),
     effects: Object.entries(chart.effects).map((effect) => {
@@ -67,6 +67,8 @@ export function buildChart(chart: Chart) {
       };
     }),
   };
+
+  console.log(finalChart);
 
   for (const note of chart.notes) {
     const noteType = note.switches ? 5 : note.length === 0 ? 1 : 2;
@@ -115,19 +117,6 @@ export function buildChart(chart: Chart) {
         ...(note.size && { size: note.size }),
       });
     }
-  }
-
-  if (!finalChart.perfectSizes.length) {
-    finalChart.perfectSizes.push({
-      offset: 0,
-      multiplier: 1,
-    });
-  }
-  if (!finalChart.speeds.length) {
-    finalChart.speeds.push({
-      offset: 0,
-      multiplier: 1,
-    });
   }
 
   return finalChart;

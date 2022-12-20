@@ -160,17 +160,33 @@ async function parseChart(uuid: string, difficulty: number) {
 
   // no user set speeds were found
   if (!chart.speeds.length) {
-    chart.speeds = chart.sections.map((section, index) => ({
-      offset: section,
-      multiplier: relevantTableEntry.speeds[index],
-    }));
+    chart.speeds = chart.sections.map((section, index) => {
+      if (index === 0) {
+        return {
+          multiplier: relevantTableEntry.speeds[index],
+        };
+      } else {
+        return {
+          offset: section,
+          multiplier: relevantTableEntry.speeds[index],
+        };
+      }
+    });
   }
   // no user set perfect sizes were found
   if (!chart.perfectSizes.length) {
-    chart.perfectSizes = chart.sections.map((section, index) => ({
-      offset: section,
-      multiplier: relevantTableEntry.perfectSizes[index],
-    }));
+    chart.perfectSizes = chart.sections.map((section, index) => {
+      if (index === 0) {
+        return {
+          multiplier: relevantTableEntry.perfectSizes[index],
+        };
+      } else {
+        return {
+          offset: section,
+          multiplier: relevantTableEntry.perfectSizes[index],
+        };
+      }
+    });
   }
 
   try {

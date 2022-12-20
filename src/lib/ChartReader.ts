@@ -20,7 +20,7 @@ export interface BPM {
 }
 
 export interface Size {
-  offset: number;
+  offset?: number;
   multiplier: number;
 }
 
