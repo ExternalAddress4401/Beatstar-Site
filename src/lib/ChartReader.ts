@@ -123,7 +123,9 @@ export function readChart(chart: string) {
           if (values[0] === "B") {
             parsedChart.bpms.push({
               offset: offset,
-              change: parseFloat(insertAt(values[1], ".", 3)),
+              change: parseFloat(
+                insertAt(values[1], ".", values[1].length - 3)
+              ),
             });
           }
         }
