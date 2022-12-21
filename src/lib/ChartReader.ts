@@ -122,8 +122,8 @@ export function readChart(chart: string) {
           const { offset, values } = splitRow(property);
           if (values[0] === "B") {
             parsedChart.bpms.push({
-              offset,
-              change: parseInt(values[1].slice(0, -3)),
+              offset: offset,
+              change: parseFloat(insertAt(values[1], ".", 3)),
             });
           }
         }

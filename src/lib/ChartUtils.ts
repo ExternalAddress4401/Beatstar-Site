@@ -115,7 +115,9 @@ export function adjustBpms(chart: Chart) {
         (note.offset - currentBpm.offset) / resolution / bpmMultiplier;
 
       note.adjustedStart =
-        currentBpm.offset - sectionAdjustment * 192 + adjustingValue * 192;
+        currentBpm.offset -
+        sectionAdjustment * resolution +
+        adjustingValue * resolution;
 
       if (note.length) {
         const endOffset = note.offset + note.length;
@@ -123,7 +125,9 @@ export function adjustBpms(chart: Chart) {
           (endOffset - currentBpm.offset) / resolution / bpmMultiplier;
 
         note.adjustedEnd =
-          currentBpm.offset - sectionAdjustment * 192 + endAdjustingValue * 192;
+          currentBpm.offset -
+          sectionAdjustment * resolution +
+          endAdjustingValue * resolution;
 
         note.length = note.adjustedEnd - note.adjustedStart;
       }
@@ -134,7 +138,9 @@ export function adjustBpms(chart: Chart) {
 
       sections = sections.map((el) =>
         el == section
-          ? currentBpm.offset - sectionAdjustment * 192 + adjustingValue * 192
+          ? currentBpm.offset -
+            sectionAdjustment * resolution +
+            adjustingValue * resolution
           : el
       );
     }
@@ -153,14 +159,18 @@ export function adjustBpms(chart: Chart) {
         (perfect.offset - currentBpm.offset) / resolution / bpmMultiplier;
 
       perfect.offset =
-        currentBpm.offset - sectionAdjustment * 192 + adjustingValue * 192;
+        currentBpm.offset -
+        sectionAdjustment * resolution +
+        adjustingValue * resolution;
     }
     for (const speed of relevantSpeeds) {
       let adjustingValue =
         (speed.offset - currentBpm.offset) / resolution / bpmMultiplier;
 
       speed.offset =
-        currentBpm.offset - sectionAdjustment * 192 + adjustingValue * 192;
+        currentBpm.offset -
+        sectionAdjustment * resolution +
+        adjustingValue * resolution;
     }
     sectionAdjustment += part - part / change;
   }
