@@ -83,6 +83,10 @@ function getNote(notes: Note[], offset: number, lane?: number) {
   }
 }
 
+function getNotes(notes: Note[], offset: number) {
+  return notes.filter((el) => el.offset === offset);
+}
+
 function getClosestNote(notes: Note[]) {
   return notes[notes.length - 1];
 }
@@ -161,16 +165,18 @@ export function readChart(chart: string) {
             for (const event of events) {
               if (event.startsWith("/")) {
                 const size = parseInt(event.slice(-1));
-                const note = getNote(parsedChart.notes, offset);
+                const notes = getNotes(parsedChart.notes, offset);
 
-                if (!note) {
+                if (!notes.length) {
                   parsedChart.errors.push(
                     `An event was found at offset ${offset} but no note was found there.` //TODO: make this better
                   );
                   continue;
                 }
 
-                note.size = size;
+                for (const note of notes) {
+                  note.size = size;
+                }
               } else if (event.startsWith("s")) {
                 parsedChart.speeds.push({
                   offset,

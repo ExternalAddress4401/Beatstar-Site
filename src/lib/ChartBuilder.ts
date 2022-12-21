@@ -68,8 +68,6 @@ export function buildChart(chart: Chart) {
     }),
   };
 
-  console.log(finalChart);
-
   for (const note of chart.notes) {
     const noteType = note.switches ? 5 : note.length === 0 ? 1 : 2;
     if (noteType === 1) {
