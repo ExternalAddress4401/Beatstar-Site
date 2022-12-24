@@ -107,6 +107,7 @@ export function readChart(chart: string) {
 
   for (const row of data) {
     const [heading, data] = row.split("{");
+    console.log(heading, data);
     switch (heading.trim()) {
       case "[Song]":
         for (const property of data.split("  ")) {
@@ -155,8 +156,14 @@ export function readChart(chart: string) {
         break;
       case "[ExpertSingle]":
         for (const property of data.split("  ")) {
+          console.log(property);
           const { offset, values } = splitRow(property);
           if (values[0] === "N") {
+            const lane = parseInt(values[1]);
+            if (lane > 4) {
+              // ignore any of the tap/switch modifiers
+              continue;
+            }
             parsedChart.notes.push({
               offset,
               lane: parseInt(values[1]),
@@ -199,6 +206,12 @@ export function readChart(chart: string) {
                   .split(">")
                   .map((el) => parseInt(el));
                 const note = getClosestNote(parsedChart.notes);
+                if (!note) {
+                  parsedChart.errors.push(
+                    `Found switch effect at ${offset} but there was no long note there.`
+                  );
+                  continue;
+                }
                 if (!note.switches) {
                   note.switches = [];
                 }

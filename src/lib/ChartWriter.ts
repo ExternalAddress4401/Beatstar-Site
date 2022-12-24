@@ -43,12 +43,16 @@ export function writeChart(chart: Chart) {
   for (const perfectSize of chart.perfectSizes) {
     const size = roundToPlaces(perfectSize.multiplier, 2)
       .toString()
-      .replace(".", "");
+      .replace(".", "")
+      .padEnd(3, "0");
     chartString += `  ${perfectSize.offset} = E p${size}\r\n`;
   }
 
   for (const speed of chart.speeds) {
-    const spd = roundToPlaces(speed.multiplier, 2).toString().replace(".", "");
+    const spd = roundToPlaces(speed.multiplier, 2)
+      .toString()
+      .replace(".", "")
+      .padEnd(3, "0");
     chartString += `  ${speed.offset} = E s${spd}\r\n`;
   }
 

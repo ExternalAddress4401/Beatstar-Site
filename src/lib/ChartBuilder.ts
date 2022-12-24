@@ -39,7 +39,10 @@ export interface BytesNote {
 
 export function buildChart(chart: Chart) {
   const directions = ["u", "d", "l", "r", "ul", "ur", "dl", "dr"];
+
   const resolution = chart.info.resolution;
+
+  console.log(chart);
 
   const finalChart: BuiltChart = {
     id: 508,
@@ -50,14 +53,16 @@ export function buildChart(chart: Chart) {
     }),
     perfectSizes: chart.perfectSizes.map((perfectSize) => {
       return {
-        ...perfectSize,
-        ...(perfectSize.offset && { offset: perfectSize.offset / resolution }),
+        ...(perfectSize.offset !== 0 && {
+          offset: perfectSize.offset / resolution,
+        }),
+        multiplier: perfectSize.multiplier,
       };
     }),
     speeds: chart.speeds.map((speed) => {
       return {
-        ...speed,
-        ...(speed.offset && { offset: speed.offset / resolution }),
+        ...(speed.offset !== 0 && { offset: speed.offset / resolution }),
+        multiplier: speed.multiplier,
       };
     }),
     effects: Object.entries(chart.effects).map((effect) => {
@@ -67,6 +72,8 @@ export function buildChart(chart: Chart) {
       };
     }),
   };
+
+  console.log(finalChart);
 
   for (const note of chart.notes) {
     const noteType = note.switches ? 5 : note.length === 0 ? 1 : 2;
