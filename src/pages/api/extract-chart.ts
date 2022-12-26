@@ -25,19 +25,26 @@ export default async function handler(
   }
 
   const chart = files.chart;
+
   const uuid = uuidv4();
 
   await fs.mkdir(`./${uuid}`);
   await fs.rename(chart.filepath, `./${uuid}/chart.bundle`);
 
-  await extractChart(uuid);
+  let data;
 
-  const data = await fs.readFile(
-    `./${uuid}/` +
-      (
-        await fs.readdir(`./${uuid}`)
-      ).filter((file) => !file.includes(".bundle"))[0]
-  );
+  if (chart.originalFilename.endsWith(".bytes")) {
+    data = await fs.readFile(`./${uuid}/chart.bundle`);
+  } else {
+    await extractChart(uuid);
+
+    data = await fs.readFile(
+      `./${uuid}/` +
+        (
+          await fs.readdir(`./${uuid}`)
+        ).filter((file) => !file.includes(".bundle"))[0]
+    );
+  }
 
   const reader = new ProtobufReader(data);
   reader.process();

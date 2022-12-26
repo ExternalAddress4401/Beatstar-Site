@@ -38,7 +38,7 @@ export default function Decrypt() {
   const openFileDialog = () => {
     let input = document.createElement("input");
     input.type = "file";
-    input.accept = ".bundle";
+    input.accept = ".bundle,.bytes";
     input.onchange = async function () {
       const formData = new FormData();
       formData.append("chart", input.files[0]);

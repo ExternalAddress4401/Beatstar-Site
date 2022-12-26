@@ -83,12 +83,28 @@ function getNote(notes: Note[], offset: number, lane?: number) {
   }
 }
 
-function getNotes(notes: Note[], offset: number) {
-  return notes.filter((el) => el.offset === offset);
+function getLane(note: Note) {
+  return note.switches ? note.switches.at(-1).lane : note.lane;
 }
 
-function getClosestNote(notes: Note[]) {
-  return notes[notes.length - 1];
+function getSwitchHoldNote(notes: Note[], eventOffset: number, lane: number) {
+  for (const note of notes) {
+    if (note.length === 0) {
+      continue;
+    }
+    console.log(note, eventOffset, lane);
+    if (
+      note.offset <= eventOffset &&
+      note.offset + note.length >= eventOffset &&
+      getLane(note) === lane - 1
+    ) {
+      return note;
+    }
+  }
+}
+
+function getNotes(notes: Note[], offset: number) {
+  return notes.filter((el) => el.offset === offset);
 }
 
 export function readChart(chart: string) {
@@ -205,7 +221,8 @@ export function readChart(chart: string) {
                   .slice(1)
                   .split(">")
                   .map((el) => parseInt(el));
-                const note = getClosestNote(parsedChart.notes);
+                const note = getSwitchHoldNote(parsedChart.notes, offset, s[0]);
+                console.log("NOTE", note);
                 if (!note) {
                   parsedChart.errors.push(
                     `Found switch effect at ${offset} but there was no long note there.`
@@ -217,7 +234,7 @@ export function readChart(chart: string) {
                 }
                 note.switches.push({
                   offset,
-                  lane: s[1],
+                  lane: s[1] - 1,
                 });
               } else {
                 const direction = event.slice(0, -1) as Direction;
@@ -253,6 +270,7 @@ export function readChart(chart: string) {
   }
 
   adjustBpms(parsedChart);
+  console.log(parsedChart);
   return parsedChart;
 }
 
