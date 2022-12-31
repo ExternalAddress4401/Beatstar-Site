@@ -73,8 +73,6 @@ export function buildChart(chart: Chart) {
     }),
   };
 
-  console.log(finalChart);
-
   for (const note of chart.notes) {
     const noteType = note.switches ? 5 : note.length === 0 ? 1 : 2;
     if (noteType === 1) {
@@ -115,7 +113,7 @@ export function buildChart(chart: Chart) {
         note: {
           switchHold: note.switches.map((s) => ({
             offset: s.offset / resolution,
-            lane: s.lane,
+            lane: s.lane + 1,
           })),
         },
         lane: note.lane + 1,

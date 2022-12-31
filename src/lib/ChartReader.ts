@@ -222,7 +222,6 @@ export function readChart(chart: string) {
                   .split(">")
                   .map((el) => parseInt(el));
                 const note = getSwitchHoldNote(parsedChart.notes, offset, s[0]);
-                console.log("NOTE", note);
                 if (!note) {
                   parsedChart.errors.push(
                     `Found switch effect at ${offset} but there was no long note there.`
