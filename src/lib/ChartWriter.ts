@@ -24,8 +24,14 @@ export function writeChart(chart: Chart) {
   for (const note of chart.notes) {
     if (note.switches) {
       chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
-      for (const s of note.switches) {
-        chartString += `  ${s.offset} = E h${note.lane}>${s.lane}\r\n`;
+      for (var i = 0; i < note.switches.length; i++) {
+        const s = note.switches[i];
+        if (i === 0) {
+          chartString += `  ${s.offset} = E h${note.lane}>${s.lane}\r\n`;
+        } else {
+          const before = note.switches[i - 1];
+          chartString += `  ${s.offset} = E h${before.lane}>${s.lane}\r\n`;
+        }
       }
     } else {
       chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
