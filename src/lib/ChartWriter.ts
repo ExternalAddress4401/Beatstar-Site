@@ -22,6 +22,7 @@ export function writeChart(chart: Chart) {
   chartString += "}\r\n[ExpertSingle]\r\n{\r\n";
 
   for (const note of chart.notes) {
+    console.log(note);
     if (note.switches) {
       chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
       for (var i = 0; i < note.switches.length; i++) {

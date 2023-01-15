@@ -180,6 +180,7 @@ export function readChart(chart: string) {
               // ignore any of the tap/switch modifiers
               continue;
             }
+            console.log(values);
             parsedChart.notes.push({
               offset,
               lane: parseInt(values[1]),
@@ -322,7 +323,7 @@ export function readBytes(json: any) {
       });
     } else if (note.note_type === 2) {
       const offset = Math.round(note.long.note[0].offset * resolution);
-      const lane = note.lane;
+      const lane = note.long.note[0].lane;
       const length = Math.round(
         (note.long.note[1].offset - note.long.note[0].offset) * resolution
       );
@@ -342,7 +343,7 @@ export function readBytes(json: any) {
         note.note.switchHold[note.note.switchHold.length - 1].offset *
           resolution
       );
-      const lane = note.lane;
+      const lane = note.note.switchHold[0].lane;
 
       parsedChart.notes.push({
         offset: startOffset,
