@@ -48,6 +48,7 @@ export default async function handler(
 
   const reader = new ProtobufReader(data);
   reader.process();
+  console.log(reader);
 
   const parsed = reader.parseProto(ChartProto);
 
