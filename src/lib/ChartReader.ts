@@ -276,11 +276,18 @@ export function readChart(chart: string) {
 
 export function readBytes(json: any) {
   const resolution = 192;
+  
+  if(!json.sections) {
+	json.sections = [];
+  }
+  if(!json.effects) {
+	json.effects = [];
+  }
 
   const effects = {};
-  for (const effect of json.effects) {
-    effects[effect.offset * resolution] = effect.effects;
-  }
+	for (const effect of json.effects) {
+	  effects[effect.offset * resolution] = effect.effects;
+	}
 
   const parsedChart: Chart = {
     info: {
