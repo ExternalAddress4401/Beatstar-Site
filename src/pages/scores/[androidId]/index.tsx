@@ -47,6 +47,7 @@ export default function Scores({ scores }: ScoresProps) {
 
         return (
           <ScoreCard
+            key={Song_id}
             title={title}
             artist={artist}
             beatmapInfo={beatmapInfo}
