@@ -18,36 +18,39 @@ export default function NewsArticle({
   const stack = [];
 
   const matches = content.match(/<.*?>/g);
-  for (const match of matches) {
-    if (match.includes("</")) {
-      content = content.replace(match, stack.pop());
-    } else if (match.includes("<align")) {
-      content = content.replace(match, '<span style="text-align: center">');
-      stack.push("</span>");
-    } else if (match.includes("Italic")) {
-      content = content.replace(match, '<span style="font-style: italic">');
-      stack.push("</span>");
-    } else if (match.includes("Bold")) {
-      content = content.replace(match, '<span style="font-weight: bold">');
-      stack.push("</span>");
-    } else if (match.includes("Link")) {
-      content = content.replace(match, "");
-      stack.push("");
-    } else if (match.includes("color")) {
-      content = content.replace(
-        match,
-        `<span style="color: ${match.slice(7, -1)}">`
-      );
-      stack.push("</span>");
-    } else if (match.includes("link")) {
-      content = content.replace(match, "");
-      stack.push("</span>");
-    } else if (match.includes("H1")) {
-      content = content.replace(match, "<h1>");
-      stack.push("</h1>");
-    } else if (match.includes("H2")) {
-      content = content.replace(match, "<h2>");
-      stack.push("</h2>");
+
+  if (matches) {
+    for (const match of matches) {
+      if (match.includes("</")) {
+        content = content.replace(match, stack.pop());
+      } else if (match.includes("<align")) {
+        content = content.replace(match, '<span style="text-align: center">');
+        stack.push("</span>");
+      } else if (match.includes("Italic")) {
+        content = content.replace(match, '<span style="font-style: italic">');
+        stack.push("</span>");
+      } else if (match.includes("Bold")) {
+        content = content.replace(match, '<span style="font-weight: bold">');
+        stack.push("</span>");
+      } else if (match.includes("Link")) {
+        content = content.replace(match, "");
+        stack.push("");
+      } else if (match.includes("color")) {
+        content = content.replace(
+          match,
+          `<span style="color: ${match.slice(7, -1)}">`
+        );
+        stack.push("</span>");
+      } else if (match.includes("link")) {
+        content = content.replace(match, "");
+        stack.push("</span>");
+      } else if (match.includes("H1")) {
+        content = content.replace(match, "<h1>");
+        stack.push("</h1>");
+      } else if (match.includes("H2")) {
+        content = content.replace(match, "<h2>");
+        stack.push("</h2>");
+      }
     }
   }
 

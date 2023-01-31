@@ -8,7 +8,6 @@ import styles from "./index.module.scss";
 import { useCache } from "../../../hooks/useCache";
 import { v4 as uuidv4 } from "uuid";
 import { promises as fs } from "fs";
-import Image from "next/image";
 import SongCard from "../../../components/SongCard";
 
 interface SongProps {
@@ -18,7 +17,7 @@ interface SongProps {
 }
 
 export default function Song({ idLabel, artwork, chartData }: SongProps) {
-  const [assets, songs, language] = useCache();
+  const { assets, songs, language } = useCache();
 
   if (!assets) {
     return <div></div>;

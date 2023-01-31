@@ -44,7 +44,7 @@ export default function Cms({ cms }: CMSProps) {
           {cms.map((el) => (
             <>
               <Button label={el.name} onClick={() => readCms(el.name)} />
-              <div>{el.version}</div>
+              <div>{el.version.split("+")[0]}</div>
             </>
           ))}
         </div>

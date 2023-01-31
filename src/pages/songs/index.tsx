@@ -1,18 +1,13 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import styles from "./index.module.scss";
-import LocalLink from "../../components/LocalLink";
 import Input from "../../components/Input";
 import { useCache } from "../../hooks/useCache";
-import Image from "next/image";
 import BasicLoader from "../../components/BasicLoader";
 import SongRow from "../../components/SongRow";
-//import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function Songs() {
-  const [assets, songs, language] = useCache();
+  const { assets, songs, language } = useCache();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  // const window = useWindowSize();
 
   if (!assets || !songs) {
     return (

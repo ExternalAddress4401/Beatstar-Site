@@ -1,0 +1,53 @@
+.card {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  font-size: 12px;
+  min-height: 85px;
+  width: 100%;
+}
+
+.titleColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0px;
+}
+
+.scoreColumn {
+  align-items: flex-end;
+}
+
+.scoreRow {
+  display: flex;
+  flex: 0.8;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 33%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.title {
+  margin: 0;
+  text-align: leftr;
+  margin-bottom: 0.5rem;
+}

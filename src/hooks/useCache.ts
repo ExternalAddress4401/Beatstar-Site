@@ -45,5 +45,5 @@ export function useCache() {
     fetchData();
   }, []);
 
-  return [assets, songs, language];
+  return { assets, songs, language };
 }

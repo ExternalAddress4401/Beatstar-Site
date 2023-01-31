@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { useCache } from "../hooks/useCache";
 import { roundToPlaces } from "../utils/roundToPlaces";
 import styles from "./SongCard.module.scss";
 

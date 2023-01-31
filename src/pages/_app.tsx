@@ -2,11 +2,15 @@ import Navigation from "../components/Navigation";
 import "../styles/globals.css";
 import "@fontsource/nunito";
 
+import styles from "./app.module.scss";
+
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Navigation />
-      <Component {...pageProps} />
+      <div className={styles.layout}>
+        <Navigation />
+        <Component {...pageProps} />
+      </div>
     </>
   );
 }

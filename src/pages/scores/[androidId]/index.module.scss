@@ -1,0 +1,10 @@
+@import "../../../styles/breakpoints.scss";
+
+.scoreContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @media (min-width: $screen-md) {
+    grid-template-columns: 1fr 1fr;
+  }
+}

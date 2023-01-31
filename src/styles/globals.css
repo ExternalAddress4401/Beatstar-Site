@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #__next {
@@ -7,11 +11,6 @@ body,
   padding: 0;
   margin: 0;
   font-family: kiona;
-}
-
-select,
-input {
-  box-sizing: border-box;
 }
 
 @font-face {
