@@ -25,8 +25,6 @@ export default async function handler(
 
   const uuid = uuidv4();
 
-  console.log(files);
-
   try {
     if (Object.keys(files).length != 1) {
       throw Error("Not enough files uploaded.");
@@ -42,7 +40,6 @@ export default async function handler(
       const chart = JSON.parse(
         (await fs.readFile(`./${uuid}/chart/508`)).toString()
       );
-      console.log("C", chart);
       const writer = new ProtobufWriter(chart);
       writer.build(ChartProto);
 
