@@ -7,9 +7,9 @@ import { ProtobufWriter, ChartProto } from "@externaladdress4401/protobuf";
 import { Chart } from "../../lib/ChartReader";
 import { readChart } from "../../lib/ChartReader";
 import { buildChart } from "../../lib/ChartBuilder";
-import { SongInfo } from "../encrypt";
 import { getMaxScore } from "../../lib/ChartUtils";
 import JSZip from "jszip";
+import { SongInfo } from "../../components/FullChartPage";
 
 interface BuiltSongInfo extends SongInfo {
   bpm: number;
@@ -33,7 +33,7 @@ export default async function handler(
   const { files, fields } = await parseForm(form, req);
   const info = JSON.parse(fields.info);
 
-  const uuid = fields.uuid;
+  const uuid = uuidv4();
 
   try {
     //files should have 3 files

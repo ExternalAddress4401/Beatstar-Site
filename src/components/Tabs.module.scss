@@ -1,0 +1,17 @@
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #333;
+  border-radius: 2rem;
+  padding: 1rem;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.selected {
+  background-color: rgb(42, 163, 161);
+  border-radius: 2rem;
+  padding: 0.5rem;
+  color: black;
+}

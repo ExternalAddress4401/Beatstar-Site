@@ -92,7 +92,6 @@ function getSwitchHoldNote(notes: Note[], eventOffset: number, lane: number) {
     if (note.length === 0) {
       continue;
     }
-    console.log(note, eventOffset, lane);
     if (
       note.offset <= eventOffset &&
       note.offset + note.length >= eventOffset &&
@@ -123,7 +122,6 @@ export function readChart(chart: string) {
 
   for (const row of data) {
     const [heading, data] = row.split("{");
-    console.log(heading, data);
     switch (heading.trim()) {
       case "[Song]":
         for (const property of data.split("  ")) {
@@ -172,7 +170,6 @@ export function readChart(chart: string) {
         break;
       case "[ExpertSingle]":
         for (const property of data.split("  ")) {
-          console.log(property);
           const { offset, values } = splitRow(property);
           if (values[0] === "N") {
             const lane = parseInt(values[1]);
@@ -180,7 +177,6 @@ export function readChart(chart: string) {
               // ignore any of the tap/switch modifiers
               continue;
             }
-            console.log(values);
             parsedChart.notes.push({
               offset,
               lane: parseInt(values[1]),
@@ -270,24 +266,23 @@ export function readChart(chart: string) {
   }
 
   adjustBpms(parsedChart);
-  console.log(parsedChart);
   return parsedChart;
 }
 
 export function readBytes(json: any) {
   const resolution = 192;
-  
-  if(!json.sections) {
-	json.sections = [];
+
+  if (!json.sections) {
+    json.sections = [];
   }
-  if(!json.effects) {
-	json.effects = [];
+  if (!json.effects) {
+    json.effects = [];
   }
 
   const effects = {};
-	for (const effect of json.effects) {
-	  effects[effect.offset * resolution] = effect.effects;
-	}
+  for (const effect of json.effects) {
+    effects[effect.offset * resolution] = effect.effects;
+  }
 
   const parsedChart: Chart = {
     info: {

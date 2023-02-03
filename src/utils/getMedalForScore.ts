@@ -32,7 +32,6 @@ function getMedalForScore(score: number, difficultyId: number) {
 
   const relevantScores = scores[difficultyId];
   if (score === relevantScores.perfect) {
-    console.log("ret perf");
     return "perfect";
   } else if (score >= relevantScores.diamond) {
     return "diamond";

@@ -42,8 +42,6 @@ export function buildChart(chart: Chart) {
 
   const resolution = chart.info.resolution;
 
-  console.log(chart);
-
   const finalChart: BuiltChart = {
     id: 508,
     interactions_id: "77-1",
