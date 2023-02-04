@@ -14,15 +14,14 @@ export function writeChart(chart: Chart) {
   }
   for (const offset in chart.effects) {
     for (const effect of chart.effects[offset]) {
-      chartString += `  ${offset} = E ${
+      chartString += `  ${offset} = E "${
         effects.find((el) => el.id === effect).idLabel
-      }\r\n`;
+      }"\r\n`;
     }
   }
   chartString += "}\r\n[ExpertSingle]\r\n{\r\n";
 
   for (const note of chart.notes) {
-    console.log(note);
     if (note.switches) {
       chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
       for (var i = 0; i < note.switches.length; i++) {
