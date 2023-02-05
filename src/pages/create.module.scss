@@ -1,0 +1,62 @@
+.screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  width: 100%;
+  height: 100vh;
+
+  .lane:nth-child(1) {
+    border-left: 5px solid black;
+  }
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  width: 70px;
+  height: 100px;
+  background-color: black;
+  position: absolute;
+  z-index: 1;
+}
+
+.line {
+  margin-left: 2.5px;
+  width: 65px;
+  height: 5px;
+  background-color: white;
+}
+
+.beatline {
+  width: 100%;
+  height: 5px;
+  background-color: gray;
+  position: absolute;
+}
+
+.lane {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+  border-right: 5px solid black;
+}
+
+.lanes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.panel {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  position: absolute;
+  left: 0;
+  top: 10%;
+  color: black;
+}

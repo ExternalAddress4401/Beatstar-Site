@@ -7,8 +7,8 @@ import styles from "./app.module.scss";
 function MyApp({ Component, pageProps }) {
   return (
     <>
+      <Navigation />
       <div className={styles.layout}>
-        <Navigation />
         <Component {...pageProps} />
       </div>
     </>
