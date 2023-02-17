@@ -34,7 +34,7 @@ export type CMSFileName =
 
 type Game = "Beatstar" | "Countrystar";
 
-export async function readCmsFile(name: CMSFileName, game: Game) {
+export async function readCmsFile(name: CMSFileName, game: Game = "Beatstar") {
   const ip =
     game === "Countrystar"
       ? "socket-gateway.prod.robin.apelabs.net"
