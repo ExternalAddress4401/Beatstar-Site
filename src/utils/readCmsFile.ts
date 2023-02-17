@@ -32,8 +32,17 @@ export type CMSFileName =
   | "LiveOpsDeeplinkRewardConfig"
   | "SongConfig";
 
-export async function readCmsFile(name: CMSFileName) {
-  const { url } = (await CMSRequester.getCMS()).find((el) => el.name === name);
+type Game = "Beatstar" | "Countrystar";
+
+export async function readCmsFile(name: CMSFileName, game: Game) {
+  const ip =
+    game === "Countrystar"
+      ? "socket-gateway.prod.robin.apelabs.net"
+      : "socket-gateway.prod.flamingo.apelabs.net";
+
+  const { url } = (await CMSRequester.getCMS(ip)).find(
+    (el) => el.name === name
+  );
   const version = url.split("?")[0].split("/")[7];
 
   let cmsData;

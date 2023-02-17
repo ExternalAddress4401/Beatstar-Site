@@ -10,7 +10,9 @@ export default async function handler(
     return;
   }
 
-  const data = await readCmsFile(req.body.name);
+  const game = req.body.game ?? "Beatstar";
+
+  const data = await readCmsFile(req.body.name, game);
 
   res.status(200).json(data);
   res.end();
