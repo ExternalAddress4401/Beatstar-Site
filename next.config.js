@@ -10,6 +10,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://info.cern.ch",
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
