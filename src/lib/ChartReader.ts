@@ -281,8 +281,10 @@ export function readBytes(json: any) {
 
   const effects = {};
   for (const effect of json.effects) {
-    effects[effect.offset * resolution] = effect.effects;
+    effects[Math.round(effect.offset * resolution)] = effect.effects;
   }
+
+  console.log(effects);
 
   const parsedChart: Chart = {
     info: {
