@@ -25,16 +25,18 @@ export default function Songs() {
         onChange={(e) => setSearchTerm(e.currentTarget.value.toLowerCase())}
       />
       <div className={styles.table}>
-        {songs.Beatmaps.map((el) => {
+        {songs.Beatmaps.map((song) => {
           const { songTitleLocId, songArtistLocId } = songs.Songs.find(
-            (song) => song.id === el.Song_id
+            (el) => el.id === song.Song_id
           );
           const title = language.strings.find(
             (el) => el.placeholder === songTitleLocId
           ).message.message;
           const beatmapInfo = songs.BeatmapVariants.find(
-            (s) => s.Song_id === el.Song_id
+            (s) => s.Song_id === song.Song_id
           );
+
+          console.log(song.id, title);
 
           if (!title.toLowerCase().includes(searchTerm)) {
             return;
@@ -42,13 +44,9 @@ export default function Songs() {
           const artist = language.strings.find(
             (el) => el.placeholder === songArtistLocId
           ).message.message;
-          const chartId = el.BeatmapVariantReference_id;
-          const songId = el.Song_id;
 
-          let chart = assets.find((el) => el.id === `interactions_${chartId}`);
-          let audio = assets.find((el) =>
-            el.id.startsWith(`${songId}_audiobank`)
-          );
+          let chart = assets.find((el) => el.id === song.Song_id)?.chart;
+          let audio = assets.find((el) => el.id === song.Song_id)?.audio;
           let difficulty = {
             image: "",
             width: 0,
@@ -84,10 +82,10 @@ export default function Songs() {
           }
           return (
             <SongRow
-              key={el.idLabel}
+              key={song.idLabel}
               title={title + (pro ? " - PRO" : "")}
               artist={artist}
-              idLabel={el.idLabel}
+              idLabel={song.idLabel}
               difficulty={difficulty}
               audio={audio}
               chart={chart}
