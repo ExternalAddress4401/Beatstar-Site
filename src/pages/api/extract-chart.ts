@@ -29,20 +29,24 @@ export default async function handler(
   const uuid = uuidv4();
 
   await fs.mkdir(`./${uuid}`);
-  await fs.rename(chart.filepath, `./${uuid}/chart.bundle`);
+  await fs.mkdir(`./${uuid}/input`);
+  await fs.mkdir(`./${uuid}/output`);
+  await fs.rename(chart.filepath, `./${uuid}/input/chart.bundle`);
 
   let data;
 
   if (chart.originalFilename.endsWith(".bytes")) {
-    data = await fs.readFile(`./${uuid}/chart.bundle`);
+    data = await fs.readFile(`./${uuid}/input/chart.bundle`);
   } else {
     await extractChart(uuid);
 
     data = await fs.readFile(
-      `./${uuid}/` +
+      `./${uuid}/output/ExportedProject/Assets/beatmapinteractions/` +
         (
-          await fs.readdir(`./${uuid}`)
-        ).filter((file) => !file.includes(".bundle"))[0]
+          await fs.readdir(
+            `./${uuid}/output/ExportedProject/Assets/beatmapinteractions`
+          )
+        ).filter((file) => file.endsWith(".bytes"))[0]
     );
   }
 
@@ -77,12 +81,12 @@ function parseForm(
 async function extractChart(uuid: string) {
   const fileName =
     process.platform === "linux"
-      ? "UnityAssetReplacer"
-      : "UnityAssetReplacer.exe";
+      ? "linux/AssetRipper"
+      : "windows/AssetRipper.exe";
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      `tools/replacer/${fileName}`,
-      ["-b", `./${uuid}/chart.bundle`, "-d", `./${uuid}`, "-m", "m_Script"],
+      `tools/extractor/${fileName}`,
+      [`./${uuid}/input/chart.bundle`, "-o", `./${uuid}/output`, "-q"],
       async function (a1, a2, a3) {
         console.log(a1, a2, a3);
         resolve();

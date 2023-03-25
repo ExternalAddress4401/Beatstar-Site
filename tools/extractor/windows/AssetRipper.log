@@ -1,0 +1,46 @@
+System : AssetRipper Console Version
+System : System Version: Microsoft Windows NT 10.0.22621.0
+System : Operating System: Windows 64 bit
+System : AssetRipper Version: 0.3.0.6
+System : AssetRipper Build Type: Release Published
+System : UTC Current Time: Sat Mar 25 03:36:25 UTC 2023
+System : UTC Compile Time: Mon Feb  6 22:39:18 UTC 2023
+General : Configuration Settings:
+General : ScriptContentLevel: Level2
+General : StreamingAssetsMode: Extract
+General : ExportRootPath: C:\Users\Falcon\Desktop\better beatstar site\Beatstar-Site\tools\extractor\Ripped
+General : ExportDependencies: False
+General : BundledAssetsExportMode: DirectExport
+General : AudioExportFormat: Default
+General : ImageExportFormat: Png
+General : MeshExportFormat: Native
+General : ScriptExportMode: Decompiled
+General : ScriptLanguageVersion: AutoSafe
+General : ShaderExportMode: Dummy
+General : SpriteExportMode: Yaml
+General : TerrainExportMode: Yaml
+General : TextExportMode: Parse
+General : EnablePrefabOutlining: False
+General : EnableStaticMeshSeparation: False
+General : Attempting to read files from ./1c987177-1563-41a8-bf04-801d21e87315/input/audio.bundle
+Import : Game file 'audio.bundle' has been found
+Import : Mixed game structure has been found at ./1c987177-1563-41a8-bf04-801d21e87315/input/audio.bundle
+Import : Files use the 'Unknown' scripting backend.
+General : Finished reading files
+General : Processing assemblies...
+General : Processing loaded assets...
+Processing : Creating Scene Definitions
+Processing : Terrain Alpha Texture Pairing
+Processing : Lighting Data Assets
+Processing : Reconstruct AnimatorController Assets
+Processing : Editor Format Conversion
+General : Finished processing assets
+: Clearing export directory...
+Export : Attempting to export assets to C:\Users\Falcon\Desktop\better beatstar site\Beatstar-Site\1c987177-1563-41a8-bf04-801d21e87315\output...
+Export : Starting export
+Export : Game files have these Unity versions: 2021.3.16f1
+Export : Exporting to Unity version 2021.3.16f1
+ExportedFile : 'TST00924' exported
+Export : Finished exporting assets
+Export : Saving game assemblies...
+Export : Finished post-export

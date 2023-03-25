@@ -28,7 +28,9 @@ export default async function handler(
   const uuid = uuidv4();
 
   await fs.mkdir(`./${uuid}`);
-  await fs.rename(audio.filepath, `./${uuid}/audio.bundle`);
+  await fs.mkdir(`./${uuid}/input`);
+  await fs.mkdir(`./${uuid}/output`);
+  await fs.rename(audio.filepath, `./${uuid}/input/audio.bundle`);
 
   await extractAudio(uuid);
   await extractWem(uuid);
@@ -37,6 +39,7 @@ export default async function handler(
   createReadStream(`${uuid}/1.ogg`)
     .pipe(res)
     .on("finish", function () {
+      fs.rm(`./${uuid}`, { recursive: true, force: true });
       res.status(200);
       res.end();
     });
@@ -62,18 +65,23 @@ function parseForm(
 async function extractAudio(uuid: string) {
   const fileName =
     process.platform === "linux"
-      ? "UnityAssetReplacer"
-      : "UnityAssetReplacer.exe";
+      ? "linux/AssetRipper"
+      : "windows/AssetRipper.exe";
   return new Promise<void>(function (resolve, reject) {
     execFile(
-      `tools/replacer/${fileName}`,
-      ["-b", `./${uuid}/audio.bundle`, "-d", `./${uuid}`, "-m", "m_Script"],
+      `tools/extractor/${fileName}`,
+      [`./${uuid}/input/audio.bundle`, "-o", `./${uuid}/output`, "-q"],
       async function (a1, a2, a3) {
-        const file = (await fs.readdir(`./${uuid}`)).filter(
-          (file) => !file.endsWith(".bundle")
-        )[0];
+        const file = (
+          await fs.readdir(
+            `./${uuid}/output/ExportedProject/Assets/audio/banks`
+          )
+        ).filter((file) => file.endsWith(".bytes"))[0];
         console.log(a1, a2, a3);
-        await fs.rename(`./${uuid}/${file}`, `./${uuid}/${file}.bnk`);
+        await fs.rename(
+          `./${uuid}/output/ExportedProject/Assets/audio/banks/${file}`,
+          `./${uuid}/${file}.bnk`
+        );
         resolve();
       }
     );
@@ -81,8 +89,8 @@ async function extractAudio(uuid: string) {
 }
 async function extractWem(uuid: string) {
   const fileName = process.platform === "linux" ? "wwiseutil" : "wwiseutil.exe";
-  const file = (await fs.readdir(`./${uuid}`)).filter(
-    (file) => !file.endsWith(".bundle")
+  const file = (await fs.readdir(`./${uuid}`)).filter((file) =>
+    file.endsWith(".bnk")
   )[0];
   return new Promise<void>(function (resolve, reject) {
     execFile(

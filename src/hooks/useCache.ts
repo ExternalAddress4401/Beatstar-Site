@@ -45,8 +45,6 @@ export function useCache() {
           };
         });
 
-        console.log(assetsConfig);
-
         setSongs(songConfig);
         setLanguage(langConfig);
         setAssets(assetsConfig);

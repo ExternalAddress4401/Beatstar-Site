@@ -66,10 +66,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@externaladdress4401/protobuf@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@externaladdress4401/protobuf/-/protobuf-1.2.1.tgz#5a2d1a907d3aba1795f862027ea188a108607fb9"
-  integrity sha512-aUOoix5kOrhGQgbqi+z7FTuYZIXLkvOGNoZyQEwVAoTkST9G+4wVPSPwo1WTwo4QThzmpAOLgzTBJQ6yheU5kg==
+"@externaladdress4401/protobuf@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@externaladdress4401/protobuf/-/protobuf-1.2.2.tgz#b108ad664747ff7f4c89189b45c81e226247a8b7"
+  integrity sha512-Ap9x0RnpiVvYZqM0XG0oSZfk0i7NW4Wn6bA34E4OUtCAqaoTSsmsdaSc/fI4IV9DXFPorBhRRt287shQ8g3UvQ==
   dependencies:
     axios "^1.1.2"
     tls "^0.0.1"
