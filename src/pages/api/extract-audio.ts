@@ -73,13 +73,11 @@ async function extractAudio(uuid: string) {
       [`./${uuid}/input/audio.bundle`, "-o", `./${uuid}/output`, "-q"],
       async function (a1, a2, a3) {
         const file = (
-          await fs.readdir(
-            `./${uuid}/output/ExportedProject/Assets/audio/banks`
-          )
+          await fs.readdir(`./${uuid}/output/ExportedProject/Assets/TextAsset/`)
         ).filter((file) => file.endsWith(".bytes"))[0];
         console.log(a1, a2, a3);
         await fs.rename(
-          `./${uuid}/output/ExportedProject/Assets/audio/banks/${file}`,
+          `./${uuid}/output/ExportedProject/Assets/TextAsset/${file}`,
           `./${uuid}/${file}.bnk`
         );
         resolve();

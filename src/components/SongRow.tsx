@@ -46,13 +46,13 @@ export default function SongRow({
       <div className={styles.end}>
         <a
           className={styles.link}
-          href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/2/Android/${audio.id}_${audio.HashAndroid}${audio.CRCAndroid}.bundle`}
+          href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/3/Android/${audio.id}_${audio.HashAndroid}${audio.CRCAndroid}.bundle`}
         >
           {audio.id === "unknown" ? "Unknown" : "Audio"}
         </a>
         <a
           className={styles.link}
-          href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/2/Android/${chart.id}_${chart.HashAndroid}${chart.CRCAndroid}.bundle`}
+          href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/3/Android/${chart.id}_${chart.HashAndroid}${chart.CRCAndroid}.bundle`}
         >
           {chart.id === "unknown" ? "Unknown" : "Chart"}
         </a>

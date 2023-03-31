@@ -31,8 +31,16 @@ export function useCache() {
         ).data;
 
         const assetsConfig = songConfig.Songs.map((song, index) => {
+          const songEntry = songConfig.Beatmaps.find(
+            (el) => el.Song_id === song.id
+          );
           const audio = song.audioAsset_id;
-          const chart = songConfig.BeatmapVariants[index].InteractionsAsset_id;
+          const chart = songConfig.BeatmapVariants.find(
+            (el) =>
+              el.InteractionsReference_id ==
+              songEntry.BeatmapVariantReference_id
+          ).InteractionsAsset_id;
+          console.log(chart);
           const artwork = song.CoverArtAsset_id;
 
           return {

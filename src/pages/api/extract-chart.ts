@@ -41,11 +41,9 @@ export default async function handler(
     await extractChart(uuid);
 
     data = await fs.readFile(
-      `./${uuid}/output/ExportedProject/Assets/beatmapinteractions/` +
+      `./${uuid}/output/ExportedProject/Assets/TextAsset/` +
         (
-          await fs.readdir(
-            `./${uuid}/output/ExportedProject/Assets/beatmapinteractions`
-          )
+          await fs.readdir(`./${uuid}/output/ExportedProject/Assets/TextAsset`)
         ).filter((file) => file.endsWith(".bytes"))[0]
     );
   }
