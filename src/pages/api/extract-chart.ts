@@ -40,12 +40,25 @@ export default async function handler(
   } else {
     await extractChart(uuid);
 
-    data = await fs.readFile(
-      `./${uuid}/output/ExportedProject/Assets/TextAsset/` +
-        (
-          await fs.readdir(`./${uuid}/output/ExportedProject/Assets/TextAsset`)
-        ).filter((file) => file.endsWith(".bytes"))[0]
-    );
+    try {
+      data = await fs.readFile(
+        `./${uuid}/output/ExportedProject/Assets/TextAsset/` +
+          (
+            await fs.readdir(
+              `./${uuid}/output/ExportedProject/Assets/TextAsset`
+            )
+          ).filter((file) => file.endsWith(".bytes"))[0]
+      );
+    } catch (e) {
+      data = await fs.readFile(
+        `./${uuid}/output/ExportedProject/Assets/beatmapinteractions/` +
+          (
+            await fs.readdir(
+              `./${uuid}/output/ExportedProject/Assets/beatmapinteractions`
+            )
+          ).filter((file) => file.endsWith(".bytes"))[0]
+      );
+    }
   }
 
   const reader = new ProtobufReader(data);
