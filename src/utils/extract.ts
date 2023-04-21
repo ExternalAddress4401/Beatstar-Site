@@ -7,23 +7,23 @@ export async function extract(jobId, input) {
 
   const fileName =
     process.platform === "linux"
-      ? "UnityAssetReplacer"
-      : "UnityAssetReplacer.exe";
-
-  return new Promise(function (resolve, reject) {
+      ? "linux/AssetRipper"
+      : "windows/AssetRipper.exe";
+  return new Promise<Buffer>(function (resolve, reject) {
     execFile(
-      `tools/replacer/${fileName}`,
-      ["-b", `./${jobId}/input.bundle`, "-d", `./${jobId}`, "-m", "m_Script"],
+      `tools/extractor/${fileName}`,
+      [`./${jobId}/input.bundle`, "-o", `./${jobId}/output`, "-q"],
       async function (a1, a2, a3) {
-        console.log(a1, a2, a3);
-        const data = await fs.readFile(
-          `./${jobId}/` +
-            (
-              await fs.readdir(`./${jobId}`)
-            ).filter((file) => file !== "input.bundle")[0]
+        const folder = await fs.readdir(
+          `./${jobId}/output/ExportedProject/Assets/TextAsset`
         );
-
-        resolve(data);
+        const file = await fs.readFile(
+          `./${jobId}/output/ExportedProject/Assets/TextAsset/` +
+            folder.filter((el) => el.endsWith(".bytes"))[0]
+        );
+        console.log(file);
+        console.log(a1, a2, a3);
+        resolve(file);
       }
     );
   });
@@ -35,7 +35,7 @@ export async function extractTextures(jobId, input) {
 
   const fileName =
     process.platform === "linux"
-      ? "UnityAssetReplacer"
+      ? "linux./UnityAssetReplacer"
       : "UnityAssetReplacer.exe";
 
   return new Promise(function (resolve, reject) {

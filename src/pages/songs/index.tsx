@@ -36,8 +36,6 @@ export default function Songs() {
             (s) => s.Song_id === song.Song_id
           );
 
-          console.log(song.id, title);
-
           if (!title.toLowerCase().includes(searchTerm)) {
             return;
           }

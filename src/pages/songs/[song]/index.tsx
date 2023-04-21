@@ -60,11 +60,20 @@ export async function getServerSideProps(context: NextPageContext) {
   const idLabel = context.query.song;
   const assets = await readCmsFile("AssetsPatchConfig");
   const songs = await readCmsFile("SongConfig");
+
   const song = songs.Beatmaps.find((beatmap) => beatmap.idLabel === idLabel);
-  const chart = assets.assetBundles.find(
-    (asset) => asset.id === `interactions_${song.BeatmapVariantReference_id}`
+
+  const asset = assets.assets.find(
+    (el) =>
+      el.name ===
+      `Assets/beatmapInteractions/${song.BeatmapVariantReference_id}.bytes`
   );
-  const chartUrl = `https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/0/Android/${chart.id}_${chart.HashAndroid}${chart.CRCAndroid}.bundle`;
+
+  const realAsset = assets.assetBundles.find((el) => el.id === asset.id);
+
+  console.log(song, realAsset);
+
+  const chartUrl = `https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/3/Android/${realAsset.id}_${realAsset.HashAndroid}${realAsset.CRCAndroid}.bundle`;
   const chartData = (await axios.get(chartUrl, { responseType: "arraybuffer" }))
     .data;
 
@@ -79,7 +88,7 @@ export async function getServerSideProps(context: NextPageContext) {
 
   //get the album art
 
-  const artwork = assets.assetBundles.find((asset) =>
+  /*const artwork = assets.assetBundles.find((asset) =>
     asset.id.startsWith(`${song.Song_id}_artwork`)
   );
 
@@ -97,14 +106,14 @@ export async function getServerSideProps(context: NextPageContext) {
     ).data;
 
     finalArtwork = await extractTextures(jobId, artworkData);
-  }
+  }*/
 
   fs.rm(`./${jobId}`, { recursive: true, force: true });
 
   return {
     props: {
       chartData: parsed,
-      artwork: finalArtwork,
+      //artwork: finalArtwork,
       idLabel,
     },
   };
