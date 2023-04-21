@@ -5,7 +5,7 @@ export function useCache() {
   const [assets, setAssets] = useState(null);
   const [songs, setSongs] = useState(null);
   const [language, setLanguage] = useState(null);
-  const bypassSessionStorage = true;
+  const bypassSessionStorage = false;
 
   useEffect(() => {
     const fetchData = async () => {
