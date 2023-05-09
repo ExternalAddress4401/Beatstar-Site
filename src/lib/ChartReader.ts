@@ -312,6 +312,18 @@ export function readBytes(json: any) {
   const directions: Direction[] = ["u", "d", "l", "r", "ul", "ur", "dl", "dr"];
 
   for (const note of json.notes) {
+    if (note.lane) {
+      if (note.note_type === 1) {
+        if (note.single) {
+          note.single.note.lane = note.lane;
+        } else if (note.long) {
+          note.long.note.lane = note.lane;
+        }
+      } else if (note.note_type === 2) {
+        note.long.note[0].lane = note.lane;
+      }
+    }
+    console.log(note);
     if (note.note_type === 1) {
       const offset = Math.round(note.single.note.offset * resolution);
       const lane = note.single ? note.single.note.lane : note.long.note.lane;
