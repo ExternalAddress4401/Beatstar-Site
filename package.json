@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@externaladdress4401/protobuf": "^1.2.5",
+    "@externaladdress4401/protobuf": "^1.2.6",
     "@fontsource/nunito": "^4.5.11",
     "@react-three/drei": "^9.40.0",
     "@react-three/fiber": "^8.9.1",
@@ -28,6 +28,7 @@
     "sharp": "^0.31.2",
     "three": "^0.146.0",
     "tls": "^0.0.1",
+    "ts-pattern": "^4.3.0",
     "uuidv4": "^6.2.13",
     "zod": "^3.19.1"
   },
