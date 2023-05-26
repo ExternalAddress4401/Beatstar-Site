@@ -113,6 +113,7 @@ export function buildChart(chart: Chart) {
             offset: s.offset / resolution,
             lane: s.lane + 1,
           })),
+          ...(note.swipe && { swipe: directions.indexOf(note.swipe) + 1 }),
         },
         lane: note.lane + 1,
         ...(note.size && { size: note.size }),

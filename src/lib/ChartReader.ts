@@ -323,7 +323,6 @@ export function readBytes(json: any) {
         note.long.note[0].lane = note.lane;
       }
     }
-    console.log(note);
     if (note.note_type === 1) {
       const offset = Math.round(note.single.note.offset * resolution);
       const lane = note.single ? note.single.note.lane : note.long.note.lane;
@@ -363,6 +362,7 @@ export function readBytes(json: any) {
         offset: startOffset,
         lane,
         length: endOffset - startOffset,
+        swipe: note.note.swipe ? directions[note.note.swipe - 1] : null,
         switches: note.note.switchHold.map((s) => ({
           offset: Math.round(s.offset * resolution),
           lane: s.lane,
