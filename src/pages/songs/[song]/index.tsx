@@ -71,9 +71,7 @@ export async function getServerSideProps(context: NextPageContext) {
 
   const realAsset = assets.assetBundles.find((el) => el.id === asset.id);
 
-  console.log(song, realAsset);
-
-  const chartUrl = `https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/3/Android/${realAsset.id}_${realAsset.HashAndroid}${realAsset.CRCAndroid}.bundle`;
+  const chartUrl = `https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/4/Android/${realAsset.id}_${realAsset.HashAndroid}${realAsset.CRCAndroid}.bundle`;
   const chartData = (await axios.get(chartUrl, { responseType: "arraybuffer" }))
     .data;
 

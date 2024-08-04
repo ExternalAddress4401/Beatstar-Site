@@ -40,7 +40,6 @@ export function useCache() {
               el.InteractionsReference_id ==
               songEntry.BeatmapVariantReference_id
           ).InteractionsAsset_id;
-          console.log(chart);
           const artwork = song.CoverArtAsset_id;
 
           return {
