@@ -29,9 +29,9 @@ export default function Navigation() {
             <Link href="/help">
               <div className={styles.greenTab}>Help</div>
             </Link>
-            <Link href="/news">
+            {/*<Link href="/news">
               <div className={styles.blueTab}>News</div>
-            </Link>
+            </Link>*/}
             <Link href="/cms">
               <div className={styles.purpleTab}>CMS</div>
             </Link>
@@ -57,9 +57,9 @@ export default function Navigation() {
         <Link href="/help">
           <div className={styles.greenTab}>Help</div>
         </Link>
-        <Link href="/news">
+        {/*<Link href="/news">
           <div className={styles.blueTab}>News</div>
-        </Link>
+        </Link>*/}
         <Link href="/cms">
           <div className={styles.purpleTab}>CMS</div>
         </Link>
