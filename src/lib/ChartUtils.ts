@@ -131,6 +131,16 @@ export function adjustBpms(chart: Chart) {
 
         note.length = note.adjustedEnd - note.adjustedStart;
       }
+
+      if (note.switches) {
+        note.switches = note.switches.map((el) => ({
+          ...el,
+          offset:
+            currentBpm.offset -
+            sectionAdjustment * resolution +
+            adjustingValue * resolution,
+        }));
+      }
     }
     for (const section of relevantSections) {
       let adjustingValue =
