@@ -38,7 +38,7 @@ export interface BytesNote {
 }
 
 export function buildChart(chart: Chart) {
-  const directions = ["u", "d", "l", "r", "ul", "ur", "dl", "dr"];
+  const directions = ["u", "d", "l", "r", "ul", "ur", "dr", "dl"];
 
   const resolution = chart.info.resolution;
 
