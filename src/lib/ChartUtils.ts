@@ -138,7 +138,8 @@ export function adjustBpms(chart: Chart) {
           offset:
             currentBpm.offset -
             sectionAdjustment * resolution +
-            adjustingValue * resolution,
+            ((el.offset - currentBpm.offset) / resolution / bpmMultiplier) *
+              resolution,
         }));
       }
     }
