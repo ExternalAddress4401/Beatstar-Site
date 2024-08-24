@@ -183,7 +183,7 @@ export function readChart(chart: string) {
               length: parseInt(values[2]),
             });
           } else if (values[0] === "E") {
-            const events = values[1].split(",");
+            const events = values[1].replace(/ /, "").split(",");
             for (const event of events) {
               if (event.startsWith("/")) {
                 const size = parseInt(event.slice(-1));
