@@ -185,8 +185,9 @@ export function readChart(chart: string) {
           } else if (values[0] === "E") {
             const events = values[1].replace(/ /, "").split(",");
             for (const event of events) {
-              if (event.startsWith("/")) {
-                const size = parseInt(event.slice(-1));
+              const lowercaseEvent = event.toLowerCase();
+              if (lowercaseEvent.startsWith("/")) {
+                const size = parseInt(lowercaseEvent.slice(-1));
                 const notes = getNotes(parsedChart.notes, offset);
 
                 if (!notes.length) {
@@ -199,22 +200,30 @@ export function readChart(chart: string) {
                 for (const note of notes) {
                   note.size = size;
                 }
-              } else if (event.startsWith("s")) {
+              } else if (lowercaseEvent.startsWith("s")) {
                 parsedChart.speeds.push({
                   offset,
                   multiplier: parseFloat(
-                    insertAt(event.slice(1), ".", event.slice(1).length - 2)
+                    insertAt(
+                      lowercaseEvent.slice(1),
+                      ".",
+                      lowercaseEvent.slice(1).length - 2
+                    )
                   ),
                 });
-              } else if (event.startsWith("p")) {
+              } else if (lowercaseEvent.startsWith("p")) {
                 parsedChart.perfectSizes.push({
                   offset,
                   multiplier: parseFloat(
-                    insertAt(event.slice(1), ".", event.slice(1).length - 2)
+                    insertAt(
+                      lowercaseEvent.slice(1),
+                      ".",
+                      lowercaseEvent.slice(1).length - 2
+                    )
                   ),
                 });
-              } else if (event.startsWith("h")) {
-                const s = event
+              } else if (lowercaseEvent.startsWith("h")) {
+                const s = lowercaseEvent
                   .slice(1)
                   .split(">")
                   .map((el) => parseInt(el));
@@ -233,8 +242,8 @@ export function readChart(chart: string) {
                   lane: s[1] - 1,
                 });
               } else {
-                const direction = event.slice(0, -1) as Direction;
-                const lane = parseInt(event.trim().slice(-1));
+                const direction = lowercaseEvent.slice(0, -1) as Direction;
+                const lane = parseInt(lowercaseEvent.trim().slice(-1));
                 const note = getNote(parsedChart.notes, offset, lane);
 
                 if (!note) {
