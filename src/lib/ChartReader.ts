@@ -222,6 +222,13 @@ export function readChart(chart: string) {
                     )
                   ),
                 });
+              } else if (lowercaseEvent.startsWith("n")) {
+                const split = lowercaseEvent.split("+");
+                parsedChart.notes.push({
+                  offset,
+                  lane: parseInt(values[1].slice(1)) - 1,
+                  length: split[1] ? parseInt(split[1]) : 0,
+                });
               } else if (lowercaseEvent.startsWith("h")) {
                 const s = lowercaseEvent
                   .slice(1)
