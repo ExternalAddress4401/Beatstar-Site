@@ -269,6 +269,34 @@ export function readChart(chart: string) {
     }
   }
 
+  // Check if all the hold notes have a start and end note
+  for (const note of parsedChart.notes) {
+    if (note.switches.length) {
+      let hasStart = false;
+      let hasEnd = false;
+      for (const s of note.switches) {
+        if (s.offset === note.offset) {
+          hasStart = true;
+        }
+        if (s.offset === note.offset + note.length) {
+          hasEnd = true;
+        }
+      }
+      if (!hasStart) {
+        note.switches.unshift({
+          offset: note.offset,
+          lane: note.lane,
+        });
+      }
+      if (!hasEnd) {
+        note.switches.push({
+          offset: note.offset + note.length,
+          lane: note.switches.at(-1).lane,
+        });
+      }
+    }
+  }
+
   if (!parsedChart.sections.length) {
     parsedChart.errors.push(
       "No sections were found. Add at least 1 in Moonscraper."
