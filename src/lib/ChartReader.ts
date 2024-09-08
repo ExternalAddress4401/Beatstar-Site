@@ -149,8 +149,8 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
   }
 
   // Now lets handle any events for the notes
-  for (const flag of flagsBlock) {
-    const [_, offset, name] = flag;
+  for (var i = 0; i < flagsBlock.length; i++) {
+    const [_, offset, name] = flagsBlock[i];
     const events = name.split(",");
     for (const event of events) {
       if (event.startsWith("n")) {
@@ -161,10 +161,12 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
           continue;
         } else if (event.includes("s")) {
           const size = parseInt(name.slice(2));
-          for (const e of flagsBlock) {
-            const [_, endOffset, name] = e;
+          for (var j = i + 1; j < flagsBlock.length; j++) {
+            const [_, endOffset, name] = flagsBlock[j];
             if (name.includes("e")) {
+              console.log(offset, endOffset);
               chart.applySizes(parseInt(offset), parseInt(endOffset), size);
+              break;
             }
           }
           // Start of a range so lets find the end offset...
