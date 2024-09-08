@@ -1,3 +1,4 @@
+import { BPM } from "../interfaces/BPM";
 import { Direction } from "../interfaces/Direction";
 import { Size } from "../interfaces/Size";
 import { insertAt } from "../utils/insertAt";
@@ -63,7 +64,7 @@ function findResolution(chart: Chart, block: string[]) {
 
 function handleBPMs(chart: Chart, block: string[]) {
   const bpmRegex = /(\d+) = B (\d+)/;
-  const bpms = [];
+  const bpms: BPM[] = [];
 
   const bpmBlock = block
     .filter((el) => !el.includes("TS"))
@@ -72,8 +73,8 @@ function handleBPMs(chart: Chart, block: string[]) {
   for (const change of bpmBlock) {
     const [_, offset, newBpm] = change;
     bpms.push({
-      offset,
-      newBpm: parseFloat(insertAt(newBpm, ".", newBpm.length - 3)),
+      offset: parseInt(offset),
+      change: parseFloat(insertAt(newBpm, ".", newBpm.length - 3)),
     });
   }
 
