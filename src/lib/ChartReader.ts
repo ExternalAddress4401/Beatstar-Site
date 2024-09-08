@@ -164,7 +164,6 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
           for (var j = i + 1; j < flagsBlock.length; j++) {
             const [_, endOffset, name] = flagsBlock[j];
             if (name.includes("e")) {
-              console.log(offset, endOffset);
               chart.applySizes(parseInt(offset), parseInt(endOffset), size);
               break;
             }
