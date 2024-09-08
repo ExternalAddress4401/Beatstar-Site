@@ -16,7 +16,7 @@ function validateChart(chart: Chart) {
   }
 }
 
-export function readChart(file: string) {
+export function readChart(file: string, useLegacyRails: boolean) {
   const data = file.split("\r\n").map((el) => el.trim());
   const chart = new Chart();
 
@@ -43,7 +43,7 @@ export function readChart(file: string) {
       chart.setSections(result.sections);
       chart.setEffects(result.effects);
     } else if (key === "[ExpertSingle]") {
-      handleNotes(chart, map[key]);
+      handleNotes(chart, map[key], useLegacyRails);
     }
   }
 
@@ -106,7 +106,7 @@ function handleEvents(chart: Chart, block: string[]) {
   };
 }
 
-function handleNotes(chart: Chart, block: string[]) {
+function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
   const noteRegex = /(\d+) = n (\d) (\d+)/;
   const flagsRegex = /(\d+) = e (.*)/;
   const notesBlock = block
@@ -188,7 +188,11 @@ function handleNotes(chart: Chart, block: string[]) {
         });
       } else if (event.startsWith("h")) {
         const [_, start, __, end] = event.split("").map((el) => parseInt(el));
-        chart.applySwitch(parseInt(offset), start - 1, end - 1);
+        if (useLegacyRails) {
+          chart.applyLegacySwitch(parseInt(offset), start - 1, end - 1);
+        } else {
+          chart.applySwitch(parseInt(offset), start - 1, end - 1);
+        }
       } else {
         const direction = event.slice(0, 1) as Direction;
         const lane = parseInt(event.slice(-1));

@@ -99,7 +99,6 @@ async function extractChart(uuid: string) {
       `tools/extractor/${fileName}`,
       [`./${uuid}/input/chart.bundle`, "-o", `./${uuid}/output`, "-q"],
       async function (a1, a2, a3) {
-        console.log(a1, a2, a3);
         resolve();
       }
     );

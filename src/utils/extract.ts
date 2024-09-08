@@ -21,8 +21,6 @@ export async function extract(jobId, input) {
           `./${jobId}/output/ExportedProject/Assets/TextAsset/` +
             folder.filter((el) => el.endsWith(".bytes"))[0]
         );
-        console.log(file);
-        console.log(a1, a2, a3);
         resolve(file);
       }
     );
@@ -43,7 +41,6 @@ export async function extractTextures(jobId, input) {
       `tools/replacer/${fileName}`,
       ["-b", `./${jobId}/input.bundle`, "-t", "-d", `./${jobId}`],
       async function (a1, a2, a3) {
-        console.log(a1, a2, a3);
         const data = await fs.readFile(
           `./${jobId}/` +
             (

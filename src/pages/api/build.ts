@@ -31,6 +31,7 @@ export default async function handler(
 
   const { files, fields } = await parseForm(form, req);
   const info = JSON.parse(fields.info);
+  const legacyRails = fields.legacyRails === "true" ? true : false;
 
   const uuid = uuidv4();
 
@@ -53,7 +54,7 @@ export default async function handler(
     await fs.rename(files.chart.filepath, `./${uuid}/chart/508`);
 
     //convert the chart to beatstars format
-    const chart = await parseChart(uuid, info.difficulty);
+    const chart = await parseChart(uuid, info.difficulty, Boolean(legacyRails));
 
     const numLanes = chart.notes.reduce(
       (prev, curr) => (curr.lane > prev ? curr.lane : prev),
@@ -133,9 +134,14 @@ function parseForm(
   });
 }
 
-async function parseChart(uuid: string, difficulty: number) {
+async function parseChart(
+  uuid: string,
+  difficulty: number,
+  useLegacyRails: boolean
+) {
   const chart = readChart(
-    (await fs.readFile(`./${uuid}/chart/508`)).toString()
+    (await fs.readFile(`./${uuid}/chart/508`)).toString(),
+    useLegacyRails
   );
 
   // for now we'll add in the default speeds and perfect sizes here
@@ -231,8 +237,6 @@ async function replaceChart(uuid: string) {
         uuid + "/chart.bundle",
       ],
       async function (a1, a2, a3) {
-        console.log(a1, a2, a3);
-
         let data = (await fs.readFile(`./${uuid}/chart.bundle`)).toString(
           "binary"
         );
@@ -266,8 +270,6 @@ async function replaceArtwork(uuid: string) {
         uuid + "/artwork.bundle",
       ],
       async function (a1, a2, a3) {
-        console.log(a1, a2, a3);
-
         let data = (await fs.readFile(`./${uuid}/artwork.bundle`)).toString(
           "binary"
         );
@@ -319,8 +321,6 @@ async function replaceAudio(uuid: string) {
             uuid + "/audio.bundle",
           ],
           async function (a1, a2, a3) {
-            console.log(a1, a2, a3);
-
             let data = (await fs.readFile(`./${uuid}/audio.bundle`)).toString(
               "binary"
             );

@@ -51,6 +51,22 @@ export class Chart {
     }
     note.swipe = direction;
   }
+  applyLegacySwitch(offset: number, startLane: number, endLane: number) {
+    const note = this.getLegacyLongNote(offset, startLane);
+    if (!note) {
+      this.errors.push(
+        `Found rail event at ${offset} but there was no target note.`
+      );
+      return;
+    }
+    if (!note.switches) {
+      note.switches = [];
+    }
+    note.switches.push({
+      offset,
+      lane: endLane,
+    });
+  }
   applySwitch(offset: number, startLane: number, endLane: number) {
     const note = this.getLongNote(offset, startLane);
     if (!note) {
@@ -117,5 +133,20 @@ export class Chart {
       }
     }
     return null;
+  }
+  getLegacyLongNote(offset: number, lane: number) {
+    for (const note of this.notes) {
+      if (note.length === 0) {
+        continue;
+      }
+      const noteLane = note.switches ? note.switches.at(-1).lane : note.lane;
+      if (
+        note.offset <= offset &&
+        note.offset + note.length >= offset &&
+        noteLane === lane
+      ) {
+        return note;
+      }
+    }
   }
 }

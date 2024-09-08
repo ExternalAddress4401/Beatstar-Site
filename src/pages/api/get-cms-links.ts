@@ -19,8 +19,6 @@ export default async function handler(
     (el) => el.name !== "LiveOpsDeeplinkRewardConfig"
   );
 
-  console.log(cms);
-
   res.status(200).json({ cms: cms.slice(0, 12) });
   res.end();
 }

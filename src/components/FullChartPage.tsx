@@ -42,6 +42,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
     difficulty: 1,
     type: "Regular",
   });
+  const [legacyRails, setLegacyRails] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[] | null>(null);
 
   const difficulties = {
@@ -102,14 +103,14 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
       switch (type) {
         case "chart":
           const chartData = await readFile(file, "text");
-          const parsedChart = readChart(chartData.toString());
+          const parsedChart = readChart(chartData.toString(), legacyRails);
           if (parsedChart.errors.length) {
             setErrors(parsedChart.errors);
             return;
           }
           setChart({
             name: file.name,
-            data: readChart(chartData.toString()),
+            data: parsedChart,
             file: file,
             icon: "check",
           });
@@ -156,7 +157,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
     formData.append("artwork", artwork.file);
     formData.append("audio", audio.file);
     formData.append("info", JSON.stringify(info));
-
+    formData.append("legacyRails", legacyRails.toString());
     onLoad(true);
 
     try {
@@ -202,6 +203,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
         />
         <Select label="Difficulty" onChange={onInfoChange} />
         <Checkbox label="Deluxe" onChange={onInfoChange} />
+        <Checkbox label="Use legacy rail notes" onChange={setLegacyRails} />
       </div>
 
       <div className={styles.group}>

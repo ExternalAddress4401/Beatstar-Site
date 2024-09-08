@@ -7,6 +7,8 @@ import Button from "./Button";
 import Select from "./Select";
 
 import styles from "./SingleFilePage.module.scss";
+import Checkbox from "./Checkbox";
+import Footer from "./Footer";
 
 interface SingleFilePageProps {
   onLoad: (value: boolean) => void;
@@ -15,6 +17,7 @@ interface SingleFilePageProps {
 export default function SingleFilePage({ onLoad }: SingleFilePageProps) {
   const [errors, setErrors] = useState<string[] | null>(null);
   const [difficulty, setDifficulty] = useState(1);
+  const [legacyRails, setLegacyRails] = useState(false);
 
   const difficulties = {
     Extreme: 1,
@@ -37,7 +40,7 @@ export default function SingleFilePage({ onLoad }: SingleFilePageProps) {
             onSubmitChart(file);
           } else {
             const chartData = await readFile(file, "text");
-            const parsedChart = readChart(chartData.toString());
+            const parsedChart = readChart(chartData.toString(), legacyRails);
             if (parsedChart.errors.length) {
               setErrors(parsedChart.errors);
               return;
@@ -110,6 +113,7 @@ export default function SingleFilePage({ onLoad }: SingleFilePageProps) {
     const formData = new FormData();
     formData.append("chart", file);
     formData.append("difficulty", difficulty.toString());
+    formData.append("legacyRails", legacyRails.toString());
 
     onLoad(true);
 
@@ -133,6 +137,11 @@ export default function SingleFilePage({ onLoad }: SingleFilePageProps) {
         label="Artwork"
         onClick={() => openFileDialog("artwork", ".png")}
       />
+      <Checkbox
+        label="Use legacy rail notes"
+        onChange={(e) => setLegacyRails(e.target.checked)}
+      />
+      <Footer errors={errors} onClose={() => setErrors(null)} />
     </div>
   );
 }

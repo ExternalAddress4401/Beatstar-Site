@@ -40,8 +40,6 @@ export async function readCmsFile(name: CMSFileName, game: Game = "Beatstar") {
       ? "socket-gateway.prod.robin.apelabs.net"
       : "socket-gateway.prod.flamingo.apelabs.net";
 
-  console.log(await CMSRequester.getCMS(ip));
-
   const { url } = (await CMSRequester.getCMS(ip)).find(
     (el) => el.name === name
   );

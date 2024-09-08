@@ -21,6 +21,7 @@ export default async function handler(
   const form = formidable();
 
   const { files, fields } = await parseForm(form, req);
+  const legacyRails = fields.legacyRails === "true" ? true : false;
 
   const uuid = uuidv4();
 
@@ -44,7 +45,7 @@ export default async function handler(
 
       await fs.writeFile(`${uuid}/chart/508`, writer.buffer);
     } else {
-      await parseChart(uuid, parseInt(fields.difficulty));
+      await parseChart(uuid, parseInt(fields.difficulty), legacyRails);
     }
 
     const promises = [replaceChart(uuid)];
@@ -125,8 +126,6 @@ async function replaceChart(uuid: string) {
         uuid + "/chart.bundle",
       ],
       async function (a1, a2, a3) {
-        console.log(a1, a2, a3);
-
         let data = (await fs.readFile(`./${uuid}/chart.bundle`)).toString(
           "binary"
         );
@@ -139,12 +138,15 @@ async function replaceChart(uuid: string) {
   });
 }
 
-async function parseChart(uuid: string, difficulty: number) {
+async function parseChart(
+  uuid: string,
+  difficulty: number,
+  useLegacyRails: boolean
+) {
   const chart = readChart(
-    (await fs.readFile(`./${uuid}/chart/508`)).toString()
+    (await fs.readFile(`./${uuid}/chart/508`)).toString(),
+    useLegacyRails
   );
-
-  console.log(chart);
 
   // for now we'll add in the default speeds and perfect sizes here
 

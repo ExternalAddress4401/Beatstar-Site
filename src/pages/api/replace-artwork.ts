@@ -115,8 +115,6 @@ async function replaceArtwork(uuid: string) {
         uuid + "/artwork.bundle",
       ],
       async function (a1, a2, a3) {
-        console.log(a1, a2, a3);
-
         let data = (await fs.readFile(`./${uuid}/artwork.bundle`)).toString(
           "binary"
         );
