@@ -196,7 +196,7 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
           chart.applySwitch(parseInt(offset), start - 1, end - 1);
         }
       } else {
-        const direction = event.slice(0, 1) as Direction;
+        const direction = event.slice(0, -1) as Direction;
         const lane = parseInt(event.slice(-1)) - 1;
         chart.applySwipe(parseInt(offset), lane, direction);
       }

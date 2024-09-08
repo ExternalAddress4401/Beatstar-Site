@@ -87,7 +87,7 @@ export class Chart {
     // Is there an exact match for this note?
     for (const note of this.notes) {
       if (note.offset === offset) {
-        if (lane && note.lane !== lane) {
+        if (lane !== undefined && note.lane !== lane) {
           continue;
         }
         return note;
@@ -96,7 +96,7 @@ export class Chart {
     // Is there a long note it could be?
     for (const note of this.notes) {
       if (note.offset <= offset && note.offset + note.length >= offset) {
-        if (lane && note.lane !== lane) {
+        if (lane !== undefined && note.lane !== lane) {
           continue;
         }
         return note;
