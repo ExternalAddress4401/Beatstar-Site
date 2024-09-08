@@ -42,7 +42,7 @@ export class Chart {
     }
   }
   applySwipe(offset: number, lane: number, direction: Direction) {
-    const note = this.getLongNote(offset, lane);
+    const note = this.getNote(offset, lane);
     if (!note) {
       this.errors.push(
         `Found event (${direction}${lane}) at ${offset} but there was no note there.`
@@ -68,7 +68,7 @@ export class Chart {
     });
   }
   applySwitch(offset: number, startLane: number, endLane: number) {
-    const note = this.getLongNote(offset, startLane);
+    const note = this.getNote(offset, startLane);
     if (!note) {
       this.errors.push(
         `Found rail event at ${offset} but there was no target note.`
@@ -84,16 +84,22 @@ export class Chart {
     });
   }
   getNote(offset: number, lane?: number) {
+    // Is there an exact match for this note?
     for (const note of this.notes) {
       if (note.offset === offset) {
-        if (lane && note.lane === lane) {
-          return note;
-        } else {
-          return note;
+        if (lane && note.lane !== lane) {
+          continue;
         }
+        return note;
       }
-      if (note.offset > offset) {
-        return null;
+    }
+    // Is there a long note it could be?
+    for (const note of this.notes) {
+      if (note.offset <= offset && note.offset + note.length >= offset) {
+        if (lane && note.lane !== lane) {
+          continue;
+        }
+        return note;
       }
     }
     return null;
@@ -121,18 +127,6 @@ export class Chart {
       }
     }
     return notes;
-  }
-  getLongNote(offset: number, lane: number) {
-    for (const note of this.notes) {
-      if (
-        note.lane === lane &&
-        note.offset <= offset &&
-        (note.length === 0 || note.offset + note.length >= offset)
-      ) {
-        return note;
-      }
-    }
-    return null;
   }
   getLegacyLongNote(offset: number, lane: number) {
     for (const note of this.notes) {
