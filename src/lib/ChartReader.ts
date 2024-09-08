@@ -9,7 +9,7 @@ function validateChart(chart: Chart) {
       "Your chart has no sections. Add at least one in Moonscraper."
     );
   }
-  if (chart.sections.length >= 5) {
+  if (chart.sections.length > 5) {
     chart.errors.push(
       "Your chart has too many sections. Only 5 sections are supported."
     );
