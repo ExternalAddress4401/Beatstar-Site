@@ -190,7 +190,7 @@ export default function App(props) {
 
 export async function getServerSideProps(context) {
   const chart = (await fs.readFile("./s.chart")).toString();
-  const c = readChart(chart);
+  const c = readChart(chart, false);
 
   for (var i = 0; i < c.notes.length - 1; i++) {
     const note = c.notes[i];
