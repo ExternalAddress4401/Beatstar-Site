@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import JSZip from "jszip";
 import { ProtobufWriter, ChartProto } from "@externaladdress4401/protobuf";
 import { buildChart } from "../../lib/ChartBuilder";
-import { Chart } from "../../lib/ChartReader";
 import { readChart } from "../../lib/ChartReader";
 
 export const config = {
@@ -59,7 +58,7 @@ export default async function handler(
           .generateNodeStream({ type: "nodebuffer", streamFiles: true })
           .pipe(res)
           .on("finish", function () {
-            //fs.rm(`./${uuid}`, { recursive: true, force: true });
+            fs.rm(`./${uuid}`, { recursive: true });
             res.status(200);
             res.end();
           });
@@ -74,7 +73,7 @@ export default async function handler(
     });
   } catch (e) {
     console.log("ERROR", e);
-    await fs.rm(`./${uuid}`, { recursive: true, force: true });
+    await fs.rm(`./${uuid}`, { recursive: true });
     res
       .status(500)
       .json({ errors: ["Something went wrong encrypting your chart."] });
@@ -141,9 +140,11 @@ async function replaceChart(uuid: string) {
 }
 
 async function parseChart(uuid: string, difficulty: number) {
-  const chart: Chart = readChart(
+  const chart = readChart(
     (await fs.readFile(`./${uuid}/chart/508`)).toString()
   );
+
+  console.log(chart);
 
   // for now we'll add in the default speeds and perfect sizes here
 

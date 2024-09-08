@@ -1,5 +1,5 @@
-import { BytesNote } from "./ChartBuilder";
-import { Chart, BPM, Note } from "./ChartReader";
+import { BPM } from "../interfaces/BPM";
+import { Chart } from "./Chart";
 
 export function getMaxScore(chart: Chart, difficulty: number) {
   let score = 0;
@@ -43,7 +43,7 @@ export function getMaxScore(chart: Chart, difficulty: number) {
 
   const holdTickCount = chart.notes.reduce(function (prev, note) {
     const isHoldSwipe = note.length && note.swipe;
-    if (isHoldSwipe && note.length % chart.info.resolution === 0) {
+    if (isHoldSwipe && note.length % chart.resolution === 0) {
       prev--;
     }
     return (
@@ -51,8 +51,8 @@ export function getMaxScore(chart: Chart, difficulty: number) {
       (note.length === 0
         ? 0
         : Math.floor(
-            Math.floor((note.offset + note.length) / chart.info.resolution) -
-              Math.floor(note.offset / chart.info.resolution)
+            Math.floor((note.offset + note.length) / chart.resolution) -
+              Math.floor(note.offset / chart.resolution)
           ))
     );
   }, 0);
@@ -71,7 +71,7 @@ export function adjustBpms(chart: Chart) {
 
   const bpms = chart.bpms;
 
-  const resolution = chart.info.resolution;
+  const resolution = chart.resolution;
 
   let startingBpm = bpms[0];
   let sectionAdjustment = 0;

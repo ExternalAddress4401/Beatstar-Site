@@ -4,7 +4,6 @@ import { promises as fs } from "fs";
 import { execFile } from "child_process";
 import { v4 as uuidv4 } from "uuid";
 import { ProtobufWriter, ChartProto } from "@externaladdress4401/protobuf";
-import { Chart } from "../../lib/ChartReader";
 import { readChart } from "../../lib/ChartReader";
 import { buildChart } from "../../lib/ChartBuilder";
 import { getMaxScore } from "../../lib/ChartUtils";
@@ -135,7 +134,7 @@ function parseForm(
 }
 
 async function parseChart(uuid: string, difficulty: number) {
-  const chart: Chart = readChart(
+  const chart = readChart(
     (await fs.readFile(`./${uuid}/chart/508`)).toString()
   );
 

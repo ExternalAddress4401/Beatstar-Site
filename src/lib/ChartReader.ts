@@ -1,316 +1,176 @@
-import { adjustBpms } from "./ChartUtils";
-import { effects } from "./Effects";
+import { Direction } from "../interfaces/Direction";
+import { Size } from "../interfaces/Size";
 import { insertAt } from "../utils/insertAt";
+import { Chart } from "./Chart";
 
-interface Info {
-  offset?: number;
-  resolution?: number;
-  player2?: string;
-  difficulty?: number;
-  previewStart?: number;
-  previewEnd?: number;
-  genre?: string;
-  mediaType?: string;
-  musicStream?: string;
+export function readChart(file: string) {
+  const data = file.split("\r\n").map((el) => el.trim());
+  const chart = new Chart();
+
+  const map = {};
+
+  for (let i = 0; i < data.length; i++) {
+    const line = data[i];
+    if (line.trim().startsWith("[")) {
+      map[line] = [];
+      i += 2;
+      while (data[i] !== "}") {
+        map[line].push(data[i++]);
+      }
+    }
+  }
+
+  for (const key in map) {
+    if (key === "[Song]") {
+      chart.setResolution(findResolution(chart, map[key]));
+    } else if (key === "[SyncTrack]") {
+      chart.setBpms(handleBPMs(chart, map[key]));
+    } else if (key === "[Events]") {
+      const result = handleEvents(chart, map[key]);
+      chart.setSections(result.sections);
+      chart.setEffects(result.effects);
+    } else if (key === "[ExpertSingle]") {
+      handleNotes(chart, map[key]);
+    }
+  }
+
+  console.log(chart.errors);
+  return chart;
 }
 
-export interface BPM {
-  offset: number;
-  change: number;
+function findResolution(chart: Chart, block: string[]) {
+  const resolution = parseInt(
+    block.find((el) => el.startsWith("Resolution")).split(" = ")[1]
+  );
+  if (!resolution || Number.isNaN(resolution)) {
+    chart.errors.push("Couldn't get the resolution for this chart.");
+  }
+  return resolution;
 }
 
-export interface Size {
-  offset?: number;
-  multiplier: number;
+function handleBPMs(chart: Chart, block: string[]) {
+  const bpmRegex = /(\d+) = B (\d+)/;
+  const bpms = [];
+
+  const bpmBlock = block
+    .filter((el) => !el.includes("TS"))
+    .map((el) => bpmRegex.exec(el));
+
+  for (const change of bpmBlock) {
+    const [_, offset, newBpm] = change;
+    bpms.push({
+      offset,
+      newBpm: parseFloat(insertAt(newBpm, ".", newBpm.length - 3)),
+    });
+  }
+
+  return bpms;
 }
 
-export interface Effect {
-  offset: number;
-  effects: number[];
-}
+function handleEvents(chart: Chart, block: string[]) {
+  const eventRegex = /(\d+) = E "(\w+)/;
+  const sections = [];
+  const effects = [];
 
-export interface Chart {
-  info: Info;
-  bpms: BPM[];
-  sections: number[];
-  notes: Note[];
-  perfectSizes: Size[];
-  speeds: Size[];
-  errors: string[];
-  effects: Record<number, number[]>;
-}
+  const eventsBlock = block.map((el) => eventRegex.exec(el));
 
-export interface Note {
-  offset: number;
-  length: number;
-  lane: number;
-  swipe?: Direction;
-  size?: number;
-  adjustedStart?: number;
-  adjustedEnd?: number;
-  switches?: {
-    offset: number;
-    lane: number;
-  }[];
-}
-
-type Direction = "u" | "d" | "l" | "r" | "ul" | "ur" | "dl" | "dr";
-
-const splitRow = (value: string) => {
-  value = value.replace(/\"/g, "");
-  const offset = parseInt(value.substring(0, value.indexOf(" ")));
-  const values = value
-    .substring(value.indexOf("= ") + 2, value.length)
-    .split(" ");
+  for (const event of eventsBlock) {
+    const [_, offset, name] = event;
+    if (name === "section") {
+      sections.push(offset);
+    } else {
+      //TODO: check here for effect existing
+      if (!effects[offset]) {
+        effects[offset] = [];
+      }
+      effects[offset].push(name);
+    }
+  }
 
   return {
-    offset,
-    values,
+    sections,
+    effects,
   };
-};
-
-function getNote(notes: Note[], offset: number, lane?: number) {
-  if (lane) {
-    return notes.find(
-      (note) =>
-        (note.offset === offset || note.offset + note.length === offset) &&
-        note.lane === lane - 1
-    );
-  } else {
-    return notes.find(
-      (note) => note.offset === offset || note.offset + note.length === offset
-    );
-  }
 }
 
-function getLane(note: Note) {
-  return note.switches ? note.switches.at(-1).lane : note.lane;
-}
+function handleNotes(chart: Chart, block: string[]) {
+  const noteRegex = /(\d+) = n (\d) (\d+)/;
+  const flagsRegex = /(\d+) = e (.*)/;
+  const notesBlock = block
+    .filter((el) => el.includes("= N"))
+    .map((el) => noteRegex.exec(el.toLowerCase()));
+  const flagsBlock = block
+    .filter((el) => el.includes("= E"))
+    .map((el) => flagsRegex.exec(el.toLowerCase()));
 
-function getSwitchHoldNote(notes: Note[], eventOffset: number, lane: number) {
-  for (const note of notes) {
-    if (note.length === 0) {
+  // First lets add in all the actual notes
+  for (const note of notesBlock) {
+    const [_, offset, lane, length] = note.map((el) => parseInt(el));
+    console.log(note);
+    console.log(offset, lane, length);
+    // ignore the tap and forced modifiers
+    if (lane > 4) {
       continue;
     }
-    if (
-      note.offset <= eventOffset &&
-      note.offset + note.length >= eventOffset &&
-      getLane(note) === lane - 1
-    ) {
-      return note;
-    }
-  }
-}
-
-function getNotes(notes: Note[], offset: number) {
-  return notes.filter((el) => el.offset === offset);
-}
-
-export function readChart(chart: string) {
-  const parsedChart: Chart = {
-    info: {},
-    bpms: [],
-    sections: [],
-    notes: [],
-    perfectSizes: [],
-    speeds: [],
-    errors: [],
-    effects: {},
-  };
-
-  const data = chart.split("\r\n").join("").split("}");
-
-  for (const row of data) {
-    const [heading, data] = row.split("{");
-    switch (heading.trim()) {
-      case "[Song]":
-        for (const property of data.split("  ")) {
-          if (!property) {
-            continue;
-          }
-          const [k, v] = property.split(" = ");
-          parsedChart.info[k.toLowerCase()] = v;
-        }
-        break;
-      case "[SyncTrack]":
-        for (const property of data.split("  ").filter(Boolean)) {
-          const { offset, values } = splitRow(property);
-          if (values[0] === "B") {
-            parsedChart.bpms.push({
-              offset: offset,
-              change: parseFloat(
-                insertAt(values[1], ".", values[1].length - 3)
-              ),
-            });
-          }
-        }
-        break;
-      case "[Events]":
-        for (const property of data.trim().split("  ").filter(Boolean)) {
-          const { offset, values } = splitRow(property);
-          if (values[1] === "section") {
-            parsedChart.sections.push(offset);
-          } else {
-            const foundEffect = effects.find(
-              (effect) => effect.idLabel === values[1]
-            );
-            if (!foundEffect) {
-              parsedChart.errors.push(
-                `Unknown effect ${values[1]} found at offset ${offset}.`
-              );
-              continue;
-            }
-            if (!parsedChart.effects[offset]) {
-              parsedChart.effects[offset] = [];
-            }
-
-            parsedChart.effects[offset].push(foundEffect.id);
-          }
-        }
-        break;
-      case "[ExpertSingle]":
-        for (const property of data.split("  ")) {
-          const { offset, values } = splitRow(property);
-          if (values[0] === "N") {
-            const lane = parseInt(values[1]);
-            if (lane > 4) {
-              // ignore any of the tap/switch modifiers
-              continue;
-            }
-            parsedChart.notes.push({
-              offset,
-              lane: parseInt(values[1]),
-              length: parseInt(values[2]),
-            });
-          } else if (values[0] === "E") {
-            const events = values[1].replace(/ /, "").split(",");
-            for (const event of events) {
-              const lowercaseEvent = event.toLowerCase();
-              if (lowercaseEvent.startsWith("/")) {
-                const size = parseInt(lowercaseEvent.slice(-1));
-                const notes = getNotes(parsedChart.notes, offset);
-
-                if (!notes.length) {
-                  parsedChart.errors.push(
-                    `An event was found at offset ${offset} but no note was found there.` //TODO: make this better
-                  );
-                  continue;
-                }
-
-                for (const note of notes) {
-                  note.size = size;
-                }
-              } else if (lowercaseEvent.startsWith("s")) {
-                parsedChart.speeds.push({
-                  offset,
-                  multiplier: parseFloat(
-                    insertAt(
-                      lowercaseEvent.slice(1),
-                      ".",
-                      lowercaseEvent.slice(1).length - 2
-                    )
-                  ),
-                });
-              } else if (lowercaseEvent.startsWith("p")) {
-                parsedChart.perfectSizes.push({
-                  offset,
-                  multiplier: parseFloat(
-                    insertAt(
-                      lowercaseEvent.slice(1),
-                      ".",
-                      lowercaseEvent.slice(1).length - 2
-                    )
-                  ),
-                });
-              } else if (lowercaseEvent.startsWith("n")) {
-                const split = lowercaseEvent.split("+");
-                parsedChart.notes.push({
-                  offset,
-                  lane: parseInt(values[1].slice(1)) - 1,
-                  length: split[1] ? parseInt(split[1]) : 0,
-                });
-              } else if (lowercaseEvent.startsWith("h")) {
-                const s = lowercaseEvent
-                  .slice(1)
-                  .split(">")
-                  .map((el) => parseInt(el));
-                const note = getSwitchHoldNote(parsedChart.notes, offset, s[0]);
-                if (!note) {
-                  parsedChart.errors.push(
-                    `Found switch effect at ${offset} but there was no long note there.`
-                  );
-                  continue;
-                }
-                if (!note.switches) {
-                  note.switches = [];
-                }
-                note.switches.push({
-                  offset,
-                  lane: s[1] - 1,
-                });
-              } else {
-                const direction = lowercaseEvent.slice(0, -1) as Direction;
-                const lane = parseInt(lowercaseEvent.trim().slice(-1));
-                const note = getNote(parsedChart.notes, offset, lane);
-
-                if (!note) {
-                  parsedChart.errors.push(
-                    `An event was found at offset ${offset} but no note was found there.` //TODO: make this better
-                  );
-                  continue;
-                }
-
-                note.swipe = direction;
-              }
-            }
-          }
-        }
-        break;
-    }
+    chart.notes.push({
+      offset,
+      lane,
+      length,
+    });
   }
 
-  // Check if all the hold notes have a start and end note
-  for (const note of parsedChart.notes) {
-    if (note.switches.length) {
-      let hasStart = false;
-      let hasEnd = false;
-      for (const s of note.switches) {
-        if (s.offset === note.offset) {
-          hasStart = true;
-        }
-        if (s.offset === note.offset + note.length) {
-          hasEnd = true;
-        }
-      }
-      if (!hasStart) {
-        note.switches.unshift({
-          offset: note.offset,
-          lane: note.lane,
-        });
-      }
-      if (!hasEnd) {
-        note.switches.push({
-          offset: note.offset + note.length,
-          lane: note.switches.at(-1).lane,
+  // Now lets handle all the n events to create those notes
+  // This is because rail notes traverse lanes and Moonscraper doesn't allow you to place notes overtop each other.
+  for (const flag of flagsBlock) {
+    const [_, offset, name] = flag;
+    const events = name.split(",");
+    for (const event of events) {
+      if (event.startsWith("n")) {
+        const split = name.split("+");
+        chart.notes.push({
+          offset: parseInt(offset),
+          lane: parseInt(split[0].slice(1)) - 1,
+          length: split[1] ? parseInt(split[1]) : 0,
         });
       }
     }
   }
 
-  if (!parsedChart.sections.length) {
-    parsedChart.errors.push(
-      "No sections were found. Add at least 1 in Moonscraper."
-    );
+  // Now lets handle any events for the notes
+  for (const flag of flagsBlock) {
+    const [_, offset, name] = flag;
+    const events = name.split(",");
+    for (const event of events) {
+      if (event.startsWith("n")) {
+        // These were handled above
+        continue;
+      } else if (event.startsWith("/")) {
+        const size = parseInt(event.slice(1));
+        if (size !== 1 && size !== 2) {
+          chart.errors.push(
+            `Invalid size ${size} given at offset ${offset}. Sizes must be 1 or 2.`
+          );
+          continue;
+        }
+        chart.applySizes(parseInt(offset), size);
+      } else if (event.startsWith("p") || event.startsWith("s")) {
+        const arr = event.startsWith("p") ? chart.perfectSizes : chart.speeds;
+        arr.push({
+          offset: parseInt(offset),
+          multiplier: parseFloat(
+            insertAt(event.slice(1), ".", event.slice(1).length - 2)
+          ),
+        });
+      } else if (event.startsWith("h")) {
+        const [_, start, __, end] = event.split("").map((el) => parseInt(el));
+        chart.applySwitch(parseInt(offset), start - 1, end - 1);
+      } else {
+        const direction = event.slice(0, 1) as Direction;
+        const lane = parseInt(event.slice(-1));
+        chart.applySwipe(parseInt(offset), lane, direction);
+      }
+    }
   }
-
-  if (parsedChart.sections.length > 5) {
-    parsedChart.errors.push(
-      `Only 5 sections are supported. Your chart has ${parsedChart.sections.length} sections.`
-    );
-  }
-
-  adjustBpms(parsedChart);
-  return parsedChart;
 }
 
 export function readBytes(json: any) {
@@ -328,30 +188,30 @@ export function readBytes(json: any) {
     effects[Math.round(effect.offset * resolution)] = effect.effects;
   }
 
-  const parsedChart: Chart = {
-    info: {
-      resolution,
-    },
-    bpms: [],
-    sections: json.sections.map((section) =>
-      Math.round(section.offset * resolution)
-    ),
-    perfectSizes: json.perfectSizes.map((size: Size) => {
+  const chart = new Chart();
+  chart.setResolution(resolution);
+  chart.setBpms([]);
+  chart.setNotes([]);
+  chart.setSections(
+    json.sections.map((section) => Math.round(section.offset * resolution))
+  );
+  chart.setPerfectSizes(
+    json.perfectSizes.map((size: Size) => {
       return {
         offset: size.offset ? Math.round(size.offset * resolution) : 0,
         multiplier: size.multiplier,
       };
-    }),
-    speeds: json.speeds.map((speed: Size) => {
-      return {
-        offset: speed.offset ? Math.round(speed.offset * resolution) : 0,
-        multiplier: speed.multiplier,
-      };
-    }),
-    notes: [],
-    errors: [],
-    effects,
-  };
+    })
+  ),
+    chart.setSpeeds(
+      json.speeds.map((speed: Size) => {
+        return {
+          offset: speed.offset ? Math.round(speed.offset * resolution) : 0,
+          multiplier: speed.multiplier,
+        };
+      })
+    );
+  chart.setEffects(effects);
 
   const directions: Direction[] = ["u", "d", "l", "r", "ul", "ur", "dl", "dr"];
 
@@ -371,7 +231,7 @@ export function readBytes(json: any) {
       const offset = Math.round(note.single.note.offset * resolution);
       const lane = note.single ? note.single.note.lane : note.long.note.lane;
 
-      parsedChart.notes.push({
+      chart.notes.push({
         offset,
         lane,
         length: 0,
@@ -385,7 +245,7 @@ export function readBytes(json: any) {
         (note.long.note[1].offset - note.long.note[0].offset) * resolution
       );
 
-      parsedChart.notes.push({
+      chart.notes.push({
         offset,
         lane,
         length,
@@ -402,7 +262,7 @@ export function readBytes(json: any) {
       );
       const lane = note.note.switchHold[0].lane;
 
-      parsedChart.notes.push({
+      chart.notes.push({
         offset: startOffset,
         lane,
         length: endOffset - startOffset,
@@ -415,5 +275,5 @@ export function readBytes(json: any) {
     }
   }
 
-  return parsedChart;
+  return chart;
 }

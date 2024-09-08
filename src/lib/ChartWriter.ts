@@ -1,5 +1,5 @@
 import { roundToPlaces } from "../utils/roundToPlaces";
-import { Chart } from "./ChartReader";
+import { Chart } from "./Chart";
 import { effects } from "./Effects";
 
 export function writeChart(chart: Chart) {

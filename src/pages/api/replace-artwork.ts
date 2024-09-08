@@ -49,13 +49,13 @@ export default async function handler(
           .generateNodeStream({ type: "nodebuffer", streamFiles: true })
           .pipe(res)
           .on("finish", function () {
-            fs.rm(`./${uuid}`, { recursive: true, force: true });
+            fs.rm(`./${uuid}`, { recursive: true });
             res.status(200);
             res.end();
           });
       } catch (e) {
         console.log("ERROR", e);
-        await fs.rm(`./${uuid}`, { recursive: true, force: true });
+        await fs.rm(`./${uuid}`, { recursive: true });
         res
           .status(500)
           .json({ errors: ["Something went wrong encrypting your chart."] });
@@ -64,7 +64,7 @@ export default async function handler(
     });
   } catch (e) {
     console.log("ERROR", e);
-    await fs.rm(`./${uuid}`, { recursive: true, force: true });
+    await fs.rm(`./${uuid}`, { recursive: true });
     res
       .status(500)
       .json({ errors: ["Something went wrong encrypting your chart."] });

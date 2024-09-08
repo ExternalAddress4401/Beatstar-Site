@@ -1,4 +1,6 @@
-import { Chart, Effect, Size } from "./ChartReader";
+import { Effect } from "../interfaces/Effect";
+import { Size } from "../interfaces/Size";
+import { Chart } from "./Chart";
 
 interface BuiltChart {
   id: number;
@@ -40,7 +42,7 @@ export interface BytesNote {
 export function buildChart(chart: Chart) {
   const directions = ["u", "d", "l", "r", "ul", "ur", "dr", "dl"];
 
-  const resolution = chart.info.resolution;
+  const resolution = chart.resolution;
 
   const finalChart: BuiltChart = {
     id: 508,
