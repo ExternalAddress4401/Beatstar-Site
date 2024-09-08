@@ -126,6 +126,7 @@ async function replaceChart(uuid: string) {
         uuid + "/chart.bundle",
       ],
       async function (a1, a2, a3) {
+        console.log(a1, a2, a3);
         let data = (await fs.readFile(`./${uuid}/chart.bundle`)).toString(
           "binary"
         );
