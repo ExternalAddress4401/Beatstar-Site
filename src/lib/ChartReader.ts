@@ -171,6 +171,32 @@ function handleNotes(chart: Chart, block: string[]) {
       }
     }
   }
+
+  // Add beginning and ending rail note switches if the charter didn't
+  const railNotes = chart.notes.filter((note) => note.switches.length);
+  for (const railNote of railNotes) {
+    let hasStart = false;
+    let hasEnd = false;
+    for (const s of railNote.switches) {
+      if (s.offset === railNote.offset) {
+        hasStart = true;
+      } else if (s.offset === railNote.offset + railNote.length) {
+        hasEnd = true;
+      }
+    }
+    if (!hasStart) {
+      railNote.switches.unshift({
+        offset: railNote.offset,
+        lane: railNote.lane,
+      });
+    }
+    if (!hasEnd) {
+      railNote.switches.push({
+        offset: railNote.offset + railNote.length,
+        lane: railNote.switches.at(-1).lane,
+      });
+    }
+  }
 }
 
 export function readBytes(json: any) {
