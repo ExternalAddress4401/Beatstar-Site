@@ -35,9 +35,11 @@ export class Chart {
   setEffects(effects: Record<number, number[]>) {
     this.effects = effects;
   }
-  applySizes(offset: number, size: number) {
-    const notes = this.getNotes(offset);
-    this.setNotes(notes.map((note) => ({ ...note, size })));
+  applySizes(startOffset: number, endOffset: number, size: number) {
+    const notes = this.getRange(startOffset, endOffset);
+    for (const note of notes) {
+      note.size = size;
+    }
   }
   applySwipe(offset: number, lane: number, direction: Direction) {
     const note = this.getNote(offset, lane);
@@ -50,9 +52,7 @@ export class Chart {
     note.swipe = direction;
   }
   applySwitch(offset: number, startLane: number, endLane: number) {
-    console.log(this.notes);
     const note = this.getLongNote(offset, startLane);
-    console.log(offset, note);
     if (!note) {
       this.errors.push(
         `Found rail event at ${offset} but there was no target note.`
@@ -82,8 +82,20 @@ export class Chart {
     }
     return null;
   }
+  getRange(startOffset: number, endOffset: number) {
+    const notes: Note[] = [];
+    for (const note of this.notes) {
+      if (note.offset >= startOffset && note.offset <= endOffset) {
+        notes.push(note);
+      }
+      if (note.offset > endOffset) {
+        return notes;
+      }
+    }
+    return notes;
+  }
   getNotes(offset: number) {
-    const notes = [];
+    const notes: Note[] = [];
     for (const note of this.notes) {
       if (note.offset === offset) {
         notes.push(note);
@@ -92,7 +104,7 @@ export class Chart {
         return notes;
       }
     }
-    return null;
+    return notes;
   }
   getLongNote(offset: number, lane: number) {
     for (const note of this.notes) {

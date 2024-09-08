@@ -3,6 +3,19 @@ import { Size } from "../interfaces/Size";
 import { insertAt } from "../utils/insertAt";
 import { Chart } from "./Chart";
 
+function validateChart(chart: Chart) {
+  if (!chart.sections.length) {
+    chart.errors.push(
+      "Your chart has no sections. Add at least one in Moonscraper."
+    );
+  }
+  if (chart.sections.length >= 5) {
+    chart.errors.push(
+      "Your chart has too many sections. Only 5 sections are supported."
+    );
+  }
+}
+
 export function readChart(file: string) {
   const data = file.split("\r\n").map((el) => el.trim());
   const chart = new Chart();
@@ -34,7 +47,7 @@ export function readChart(file: string) {
     }
   }
 
-  console.log(chart.errors);
+  validateChart(chart);
   return chart;
 }
 
@@ -106,8 +119,6 @@ function handleNotes(chart: Chart, block: string[]) {
   // First lets add in all the actual notes
   for (const note of notesBlock) {
     const [_, offset, lane, length] = note.map((el) => parseInt(el));
-    console.log(note);
-    console.log(offset, lane, length);
     // ignore the tap and forced modifiers
     if (lane > 4) {
       continue;
@@ -145,14 +156,28 @@ function handleNotes(chart: Chart, block: string[]) {
         // These were handled above
         continue;
       } else if (event.startsWith("/")) {
-        const size = parseInt(event.slice(1));
-        if (size !== 1 && size !== 2) {
-          chart.errors.push(
-            `Invalid size ${size} given at offset ${offset}. Sizes must be 1 or 2.`
-          );
+        if (event.includes("e")) {
           continue;
+        } else if (event.includes("s")) {
+          const size = parseInt(name.slice(2));
+          for (const e of flagsBlock) {
+            const [_, endOffset, name] = e;
+            if (name.includes("e")) {
+              chart.applySizes(parseInt(offset), parseInt(endOffset), size);
+            }
+          }
+          // Start of a range so lets find the end offset...
+        } else {
+          // Single note
+          const size = parseInt(event.slice(1));
+          if (size !== 1 && size !== 2) {
+            chart.errors.push(
+              `Invalid size ${size} given at offset ${offset}. Sizes must be 1 or 2.`
+            );
+            continue;
+          }
+          chart.applySizes(parseInt(offset), parseInt(offset), size);
         }
-        chart.applySizes(parseInt(offset), size);
       } else if (event.startsWith("p") || event.startsWith("s")) {
         const arr = event.startsWith("p") ? chart.perfectSizes : chart.speeds;
         arr.push({
@@ -173,7 +198,7 @@ function handleNotes(chart: Chart, block: string[]) {
   }
 
   // Add beginning and ending rail note switches if the charter didn't
-  const railNotes = chart.notes.filter((note) => note.switches.length);
+  const railNotes = chart.notes.filter((note) => note.switches);
   for (const railNote of railNotes) {
     let hasStart = false;
     let hasEnd = false;

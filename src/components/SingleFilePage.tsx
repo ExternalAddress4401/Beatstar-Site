@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-import UploadProps from "../interfaces/UploadProps";
 import { readChart } from "../lib/ChartReader";
 import { isPng } from "../utils/isPng";
 import { readFile } from "../utils/readFile";
