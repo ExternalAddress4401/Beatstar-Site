@@ -1,4 +1,4 @@
-import { Chart } from "../lib/ChartReader";
+import { Chart } from "../lib/Chart";
 
 export default interface UploadProps {
   name?: string;
