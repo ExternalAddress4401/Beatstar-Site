@@ -195,7 +195,7 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
         }
       } else {
         const direction = event.slice(0, 1) as Direction;
-        const lane = parseInt(event.slice(-1));
+        const lane = parseInt(event.slice(-1)) - 1;
         chart.applySwipe(parseInt(offset), lane, direction);
       }
     }

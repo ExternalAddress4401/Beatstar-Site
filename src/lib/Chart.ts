@@ -42,7 +42,7 @@ export class Chart {
     }
   }
   applySwipe(offset: number, lane: number, direction: Direction) {
-    const note = this.getNote(offset, lane);
+    const note = this.getLongNote(offset, lane);
     if (!note) {
       this.errors.push(
         `Found event (${direction}${lane}) at ${offset} but there was no note there.`
@@ -127,7 +127,7 @@ export class Chart {
       if (
         note.lane === lane &&
         note.offset <= offset &&
-        note.offset + note.length >= offset
+        (note.length === 0 || note.offset + note.length >= offset)
       ) {
         return note;
       }
