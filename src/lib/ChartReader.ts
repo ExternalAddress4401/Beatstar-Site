@@ -85,7 +85,7 @@ function handleBPMs(chart: Chart, block: string[]) {
 function handleEvents(chart: Chart, block: string[]) {
   const eventRegex = /(\d+) = E "(\w+)/;
   const sections = [];
-  const effects = [];
+  const chartEffects = [];
 
   const eventsBlock = block.map((el) => eventRegex.exec(el));
 
@@ -103,15 +103,15 @@ function handleEvents(chart: Chart, block: string[]) {
         continue;
       }
       if (!effects[offset]) {
-        effects[offset] = [];
+        chartEffects[offset] = [];
       }
-      effects[offset].push(effect.id);
+      chartEffects[offset].push(effect.id);
     }
   }
 
   return {
     sections,
-    effects,
+    effects: chartEffects,
   };
 }
 
