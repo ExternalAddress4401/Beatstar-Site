@@ -85,7 +85,7 @@ function handleBPMs(chart: Chart, block: string[]) {
 function handleEvents(chart: Chart, block: string[]) {
   const eventRegex = /(\d+) = E "(\w+)/;
   const sections = [];
-  const chartEffects = [];
+  const chartEffects = {};
 
   const eventsBlock = block.map((el) => eventRegex.exec(el));
 
@@ -94,20 +94,22 @@ function handleEvents(chart: Chart, block: string[]) {
     if (name === "section") {
       sections.push(offset);
     } else {
-      //TODO: check here for effect existing
       const effect = effects.find((el) => el.idLabel === name);
+      console.log(effect);
       if (!effect) {
         chart.errors.push(
           `Found an effect ${name} at offset ${offset} that doesn't exist.`
         );
         continue;
       }
-      if (!effects[offset]) {
+      if (!chartEffects[offset]) {
         chartEffects[offset] = [];
       }
       chartEffects[offset].push(effect.id);
     }
   }
+
+  console.log(chartEffects);
 
   return {
     sections,
