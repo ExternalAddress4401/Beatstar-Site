@@ -3,6 +3,7 @@ import { Direction } from "../interfaces/Direction";
 import { Size } from "../interfaces/Size";
 import { insertAt } from "../utils/insertAt";
 import { Chart } from "./Chart";
+import { effects } from "./Effects";
 
 function validateChart(chart: Chart) {
   if (!chart.sections.length) {
@@ -94,10 +95,17 @@ function handleEvents(chart: Chart, block: string[]) {
       sections.push(offset);
     } else {
       //TODO: check here for effect existing
+      const effect = effects.find((el) => el.idLabel === name);
+      if (!effect) {
+        chart.errors.push(
+          `Found an effect ${name} at offset ${offset} that doesn't exist.`
+        );
+        continue;
+      }
       if (!effects[offset]) {
         effects[offset] = [];
       }
-      effects[offset].push(name);
+      effects[offset].push(effect.id);
     }
   }
 
