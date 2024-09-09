@@ -95,7 +95,6 @@ function handleEvents(chart: Chart, block: string[]) {
       sections.push(offset);
     } else {
       const effect = effects.find((el) => el.idLabel === name);
-      console.log(effect);
       if (!effect) {
         chart.errors.push(
           `Found an effect ${name} at offset ${offset} that doesn't exist.`
@@ -108,8 +107,6 @@ function handleEvents(chart: Chart, block: string[]) {
       chartEffects[offset].push(effect.id);
     }
   }
-
-  console.log(chartEffects);
 
   return {
     sections,
