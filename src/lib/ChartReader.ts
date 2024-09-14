@@ -3,6 +3,7 @@ import { Direction } from "../interfaces/Direction";
 import { Size } from "../interfaces/Size";
 import { insertAt } from "../utils/insertAt";
 import { Chart } from "./Chart";
+import { adjustBpms } from "./ChartUtils";
 import { effects } from "./Effects";
 
 function validateChart(chart: Chart) {
@@ -50,6 +51,7 @@ export function readChart(file: string, useLegacyRails: boolean) {
   }
 
   validateChart(chart);
+  adjustBpms(chart);
   return chart;
 }
 
