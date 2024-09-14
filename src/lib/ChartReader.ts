@@ -140,6 +140,8 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
     });
   }
 
+  console.log(chart.notes);
+
   // Now lets handle all the n events to create those notes
   // This is because rail notes traverse lanes and Moonscraper doesn't allow you to place notes overtop each other.
   for (const flag of flagsBlock) {
@@ -147,6 +149,7 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
     const events = name.split(",");
     for (const event of events) {
       if (event.startsWith("n")) {
+        console.log(event);
         const split = name.split("+");
         chart.notes.push({
           offset: parseInt(offset),
@@ -237,6 +240,9 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
       });
     }
   }
+
+  chart.setNotes(chart.notes.sort((a, b) => a.offset - b.offset));
+  console.log(chart.notes);
 }
 
 export function readBytes(json: any) {
