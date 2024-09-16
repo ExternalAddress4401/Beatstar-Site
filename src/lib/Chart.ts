@@ -1,13 +1,14 @@
 import { BPM } from "../interfaces/BPM";
 import { Direction } from "../interfaces/Direction";
 import { Note } from "../interfaces/Note";
+import { Section } from "../interfaces/Section";
 import { Size } from "../interfaces/Size";
 
 export class Chart {
   resolution: number = 0;
   notes: Note[] = [];
   bpms: BPM[] = [];
-  sections: number[] = [];
+  sections: Section[] = [];
   perfectSizes: Size[] = [];
   speeds: Size[] = [];
   errors: string[] = [];
@@ -23,7 +24,7 @@ export class Chart {
   setBpms(bpms: BPM[]) {
     this.bpms = bpms;
   }
-  setSections(sections: number[]) {
+  setSections(sections: Section[]) {
     this.sections = sections;
   }
   setPerfectSizes(perfectSizes: Size[]) {

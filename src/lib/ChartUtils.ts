@@ -98,7 +98,7 @@ export function adjustBpms(chart: Chart) {
       (el) => el.offset > currentBpm.offset && el.offset <= nextBpm.offset
     );
     let relevantSections = sections.filter(
-      (el) => el > currentBpm.offset && el <= nextBpm.offset
+      (el) => el.offset > currentBpm.offset && el.offset <= nextBpm.offset
     );
     let relevantEffects = Object.keys(effects)
       .filter((el: any) => el > currentBpm.offset && el <= nextBpm.offset)
@@ -145,15 +145,12 @@ export function adjustBpms(chart: Chart) {
     }
     for (const section of relevantSections) {
       let adjustingValue =
-        (section - currentBpm.offset) / resolution / bpmMultiplier;
+        (section.offset - currentBpm.offset) / resolution / bpmMultiplier;
 
-      sections = sections.map((el) =>
-        el == section
-          ? currentBpm.offset -
-            sectionAdjustment * resolution +
-            adjustingValue * resolution
-          : el
-      );
+      section.adjustedOffset =
+        currentBpm.offset -
+        sectionAdjustment * resolution +
+        adjustingValue * resolution;
     }
     for (const effect of relevantEffects) {
       let adjustingValue =
@@ -169,7 +166,7 @@ export function adjustBpms(chart: Chart) {
       let adjustingValue =
         (perfect.offset - currentBpm.offset) / resolution / bpmMultiplier;
 
-      perfect.offset =
+      perfect.adjustedOffset =
         currentBpm.offset -
         sectionAdjustment * resolution +
         adjustingValue * resolution;
@@ -178,7 +175,7 @@ export function adjustBpms(chart: Chart) {
       let adjustingValue =
         (speed.offset - currentBpm.offset) / resolution / bpmMultiplier;
 
-      speed.offset =
+      speed.adjustedOffset =
         currentBpm.offset -
         sectionAdjustment * resolution +
         adjustingValue * resolution;
@@ -189,8 +186,16 @@ export function adjustBpms(chart: Chart) {
   for (const note of notes) {
     note.offset = note.adjustedStart ? note.adjustedStart : note.offset;
   }
+  for (const section of sections) {
+    section.offset = section.adjustedOffset;
+  }
+  for (const perfect of perfects) {
+    perfect.offset = perfect.adjustedOffset;
+  }
+  for (const speed of speeds) {
+    speed.offset = speed.adjustedOffset;
+  }
 
-  chart.sections = sections;
   chart.effects = Object.keys(adjustedEffects).length
     ? adjustedEffects
     : effects;

@@ -7,13 +7,18 @@ interface BuiltChart {
   interactions_id: string;
   notes: BytesNote[];
   sections: BuiltSection[];
-  perfectSizes: Size[];
-  speeds: Size[];
+  perfectSizes: BuiltSize[];
+  speeds: BuiltSize[];
   effects: Effect[];
 }
 
 interface BuiltSection {
   offset: number;
+}
+
+interface BuiltSize {
+  offset: number;
+  multiplier: number;
 }
 
 export interface BytesNote {
@@ -49,19 +54,21 @@ export function buildChart(chart: Chart) {
     interactions_id: "77-1",
     notes: [],
     sections: chart.sections.map((section) => {
-      return { offset: section / resolution };
+      return { offset: section.adjustedOffset / resolution };
     }),
     perfectSizes: chart.perfectSizes.map((perfectSize) => {
       return {
         ...(perfectSize.offset !== 0 && {
-          offset: perfectSize.offset / resolution,
+          offset: perfectSize.adjustedOffset / resolution,
         }),
         multiplier: perfectSize.multiplier,
       };
     }),
     speeds: chart.speeds.map((speed) => {
       return {
-        ...(speed.offset !== 0 && { offset: speed.offset / resolution }),
+        ...(speed.offset !== 0 && {
+          offset: speed.adjustedOffset / resolution,
+        }),
         multiplier: speed.multiplier,
       };
     }),

@@ -169,11 +169,13 @@ async function parseChart(
       if (index === 0) {
         return {
           multiplier: relevantTableEntry.speeds[index],
+          adjustedOffset: section.offset,
         };
       } else {
         return {
-          offset: section,
+          offset: section.offset,
           multiplier: relevantTableEntry.speeds[index],
+          adjustedOffset: section.offset,
         };
       }
     });
@@ -184,11 +186,13 @@ async function parseChart(
       if (index === 0) {
         return {
           multiplier: relevantTableEntry.perfectSizes[index],
+          adjustedOffset: section.offset,
         };
       } else {
         return {
-          offset: section,
+          offset: section.offset,
           multiplier: relevantTableEntry.perfectSizes[index],
+          adjustedOffset: section.offset,
         };
       }
     });

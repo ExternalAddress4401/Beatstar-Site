@@ -1,5 +1,6 @@
 import { BPM } from "../interfaces/BPM";
 import { Direction } from "../interfaces/Direction";
+import { Section } from "../interfaces/Section";
 import { Size } from "../interfaces/Size";
 import { insertAt } from "../utils/insertAt";
 import { Chart } from "./Chart";
@@ -86,7 +87,7 @@ function handleBPMs(chart: Chart, block: string[]) {
 
 function handleEvents(chart: Chart, block: string[]) {
   const eventRegex = /(\d+) = E "(\w+)/;
-  const sections = [];
+  const sections: Section[] = [];
   const chartEffects = {};
 
   const eventsBlock = block.map((el) => eventRegex.exec(el));
@@ -94,7 +95,8 @@ function handleEvents(chart: Chart, block: string[]) {
   for (const event of eventsBlock) {
     const [_, offset, name] = event;
     if (name === "section") {
-      sections.push(offset);
+      const o = parseInt(offset);
+      sections.push({ offset: o, adjustedOffset: o });
     } else {
       const effect = effects.find((el) => el.idLabel === name);
       if (!effect) {
@@ -140,8 +142,6 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
     });
   }
 
-  console.log(chart.notes);
-
   // Now lets handle all the n events to create those notes
   // This is because rail notes traverse lanes and Moonscraper doesn't allow you to place notes overtop each other.
   for (const flag of flagsBlock) {
@@ -149,7 +149,6 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
     const events = name.split(",");
     for (const event of events) {
       if (event.startsWith("n")) {
-        console.log(event);
         const split = name.split("+");
         chart.notes.push({
           offset: parseInt(offset),
@@ -199,6 +198,7 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
           multiplier: parseFloat(
             insertAt(event.slice(1), ".", event.slice(1).length - 2)
           ),
+          adjustedOffset: parseInt(offset),
         });
       } else if (event.startsWith("h")) {
         const [_, start, __, end] = event.split("").map((el) => parseInt(el));
@@ -242,7 +242,6 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
   }
 
   chart.setNotes(chart.notes.sort((a, b) => a.offset - b.offset));
-  console.log(chart.notes);
 }
 
 export function readBytes(json: any) {
