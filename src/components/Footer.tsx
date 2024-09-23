@@ -9,6 +9,7 @@ interface FooterProps {
 
 export default function Footer({ errors, onClose }: FooterProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  console.log(`fa-solid fa-chevron-${isExpanded ? "down" : "up"}`);
   if (!errors) {
     return;
   }
@@ -24,12 +25,19 @@ export default function Footer({ errors, onClose }: FooterProps) {
         })}
       >
         <div className={styles.buttons}>
-          <i className={cn("fa-solid fa-x", styles.icon)} onClick={onClose}></i>
+          <div onClick={onClose}>
+            <i className={cn("fa-solid fa-x", styles.icon)} />
+          </div>
+
           {errors.length > 1 && (
-            <i
-              className={`fa-solid fa-chevron-${isExpanded ? "down" : "up"}`}
+            <div
+              className={styles.icon}
               onClick={() => setIsExpanded(!isExpanded)}
-            ></i>
+            >
+              <i
+                className={`fa-solid fa-chevron-${isExpanded ? "down" : "up"}`}
+              />
+            </div>
           )}
           <p>
             {errors.length} error{errors.length > 1 ? "s" : ""} found.
