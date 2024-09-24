@@ -1,5 +1,6 @@
 import { BPM } from "../interfaces/BPM";
 import { Direction } from "../interfaces/Direction";
+import { Effect } from "../interfaces/Effect";
 import { Note } from "../interfaces/Note";
 import { Section } from "../interfaces/Section";
 import { Size } from "../interfaces/Size";
@@ -12,7 +13,7 @@ export class Chart {
   perfectSizes: Size[] = [];
   speeds: Size[] = [];
   errors: string[] = [];
-  effects: Record<number, number[]> = {};
+  effects: Effect[];
 
   constructor() {}
   setResolution(resolution: number) {
@@ -33,7 +34,7 @@ export class Chart {
   setSpeeds(speeds: Size[]) {
     this.speeds = speeds;
   }
-  setEffects(effects: Record<number, number[]>) {
+  setEffects(effects: Effect[]) {
     this.effects = effects;
   }
   applySizes(startOffset: number, endOffset: number, size: number) {

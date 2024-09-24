@@ -100,9 +100,10 @@ export function adjustBpms(chart: Chart) {
     let relevantSections = sections.filter(
       (el) => el.offset > currentBpm.offset && el.offset <= nextBpm.offset
     );
-    let relevantEffects = Object.keys(effects)
-      .filter((el: any) => el > currentBpm.offset && el <= nextBpm.offset)
-      .map((el) => parseFloat(el));
+    let relevantEffects = effects.filter(
+      (effect) =>
+        effect.offset > currentBpm.offset && effect.offset <= nextBpm.offset
+    );
     let relevantPerfects = perfects.filter(
       (el) => el.offset > currentBpm.offset && el.offset <= nextBpm.offset
     );
@@ -154,13 +155,12 @@ export function adjustBpms(chart: Chart) {
     }
     for (const effect of relevantEffects) {
       let adjustingValue =
-        (effect - currentBpm.offset) / resolution / bpmMultiplier;
+        (effect.offset - currentBpm.offset) / resolution / bpmMultiplier;
 
-      adjustedEffects[
+      effect.adjustedOffset =
         currentBpm.offset -
-          sectionAdjustment * resolution +
-          adjustingValue * resolution
-      ] = effects[effect];
+        sectionAdjustment * resolution +
+        adjustingValue * resolution;
     }
     for (const perfect of relevantPerfects) {
       let adjustingValue =
@@ -195,8 +195,7 @@ export function adjustBpms(chart: Chart) {
   for (const speed of speeds) {
     speed.offset = speed.adjustedOffset;
   }
-
-  chart.effects = Object.keys(adjustedEffects).length
-    ? adjustedEffects
-    : effects;
+  for (const effect of effects) {
+    effect.offset = effect.adjustedOffset;
+  }
 }

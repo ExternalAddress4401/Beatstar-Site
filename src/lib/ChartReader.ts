@@ -1,5 +1,6 @@
 import { BPM } from "../interfaces/BPM";
 import { Direction } from "../interfaces/Direction";
+import { Effect } from "../interfaces/Effect";
 import { Section } from "../interfaces/Section";
 import { Size } from "../interfaces/Size";
 import { insertAt } from "../utils/insertAt";
@@ -88,7 +89,7 @@ function handleBPMs(chart: Chart, block: string[]) {
 function handleEvents(chart: Chart, block: string[]) {
   const eventRegex = /(\d+) = E "(\w+)/;
   const sections: Section[] = [];
-  const chartEffects = {};
+  const chartEffects: Effect[] = [];
 
   const eventsBlock = block.map((el) => eventRegex.exec(el));
 
@@ -105,10 +106,19 @@ function handleEvents(chart: Chart, block: string[]) {
         );
         continue;
       }
-      if (!chartEffects[offset]) {
-        chartEffects[offset] = [];
+      const effectsAtOffset = chartEffects.find(
+        (el) => el.offset === parseInt(offset)
+      );
+      if (!effectsAtOffset) {
+        const o = parseInt(offset);
+        chartEffects.push({
+          offset: o,
+          adjustedOffset: o,
+          effects: [effect.id],
+        });
+      } else {
+        effectsAtOffset.effects.push(effect.id);
       }
-      chartEffects[offset].push(effect.id);
     }
   }
 
