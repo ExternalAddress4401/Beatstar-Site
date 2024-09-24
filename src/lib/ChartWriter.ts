@@ -12,10 +12,10 @@ export function writeChart(chart: Chart) {
     const section = chart.sections[i];
     chartString += `  ${section} = E "section stage${i + 1}"\r\n`;
   }
-  for (const offset in chart.effects) {
-    for (const effect of chart.effects[offset]) {
-      chartString += `  ${offset} = E "${
-        effects.find((el) => el.id === effect).idLabel
+  for (const effect of chart.effects) {
+    for (const e of effect.effects) {
+      chartString += `  ${effect.offset} = E "${
+        effects.find((el) => el.id === e).idLabel
       }"\r\n`;
     }
   }

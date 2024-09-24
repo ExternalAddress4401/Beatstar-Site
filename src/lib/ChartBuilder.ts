@@ -9,7 +9,7 @@ interface BuiltChart {
   sections: BuiltSection[];
   perfectSizes: BuiltSize[];
   speeds: BuiltSize[];
-  effects: Effect[];
+  effects: BuiltEffect[];
 }
 
 interface BuiltSection {
@@ -19,6 +19,11 @@ interface BuiltSection {
 interface BuiltSize {
   offset: number;
   multiplier: number;
+}
+
+interface BuiltEffect {
+  offset: number;
+  effects: number[];
 }
 
 export interface BytesNote {
@@ -72,10 +77,10 @@ export function buildChart(chart: Chart) {
         multiplier: speed.multiplier,
       };
     }),
-    effects: Object.entries(chart.effects).map((effect) => {
+    effects: chart.effects.map((effect) => {
       return {
-        offset: parseFloat(effect[0]) / resolution,
-        effects: effect[1],
+        offset: effect.adjustedOffset / resolution,
+        effects: effect.effects,
       };
     }),
   };

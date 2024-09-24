@@ -283,16 +283,23 @@ export function readBytes(json: any) {
         multiplier: size.multiplier,
       };
     })
-  ),
-    chart.setSpeeds(
-      json.speeds.map((speed: Size) => {
-        return {
-          offset: speed.offset ? Math.round(speed.offset * resolution) : 0,
-          multiplier: speed.multiplier,
-        };
-      })
-    );
-  chart.setEffects(effects);
+  );
+  chart.setSpeeds(
+    json.speeds.map((speed: Size) => {
+      return {
+        offset: speed.offset ? Math.round(speed.offset * resolution) : 0,
+        multiplier: speed.multiplier,
+      };
+    })
+  );
+  chart.setEffects(
+    json.effects.map((effect: Effect) => {
+      return {
+        offset: effect.offset ? Math.round(effect.offset * resolution) : 0,
+        effects: effect.effects,
+      };
+    })
+  );
 
   const directions: Direction[] = ["u", "d", "l", "r", "ul", "ur", "dl", "dr"];
 
