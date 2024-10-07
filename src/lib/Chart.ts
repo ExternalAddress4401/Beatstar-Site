@@ -70,7 +70,7 @@ export class Chart {
     });
   }
   applySwitch(offset: number, startLane: number, endLane: number) {
-    const note = this.getNote(offset, startLane);
+    const note = this.getLongNote(offset, startLane);
     if (!note) {
       this.errors.push(
         `Found rail event at ${offset} but there was no target note.`
@@ -84,6 +84,17 @@ export class Chart {
       offset,
       lane: endLane,
     });
+  }
+  getLongNote(offset: number, lane?: number) {
+    for (const note of this.notes) {
+      if (note.offset <= offset && note.offset + note.length >= offset) {
+        if (lane !== undefined && note.lane !== lane) {
+          continue;
+        }
+        return note;
+      }
+    }
+    return null;
   }
   getNote(offset: number, lane?: number) {
     // Is there an exact match for this note?
