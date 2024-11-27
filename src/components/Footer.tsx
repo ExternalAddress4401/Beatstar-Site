@@ -9,7 +9,6 @@ interface FooterProps {
 
 export default function Footer({ errors, onClose }: FooterProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  console.log(`fa-solid fa-chevron-${isExpanded ? "down" : "up"}`);
   if (!errors) {
     return;
   }

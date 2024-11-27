@@ -28,6 +28,11 @@ export function writeChart(chart: Chart) {
         const s = note.switches[i];
         chartString += `  ${s.offset} = E h${note.lane}>${s.lane}\r\n`;
       }
+      if (note.length && note.swipe) {
+        chartString += `  ${
+          note.length ? note.offset + note.length : note.offset
+        } = E ${note.swipe}${note.lane}\r\n`;
+      }
     } else {
       chartString += `  ${note.offset} = N ${note.lane - 1} ${note.length}\r\n`;
       if (note.swipe) {

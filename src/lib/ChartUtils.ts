@@ -43,9 +43,15 @@ export function getMaxScore(chart: Chart, difficulty: number) {
 
   const holdTickCount = chart.notes.reduce(function (prev, note) {
     const isHoldSwipe = note.length && note.swipe;
-    if (isHoldSwipe && note.length % chart.resolution === 0) {
+    if (isHoldSwipe && (note.offset % 192) + note.length >= chart.resolution) {
+      prev--;
+    } else if (
+      note.switches &&
+      (note.offset % 192) + note.length >= chart.resolution
+    ) {
       prev--;
     }
+
     return (
       prev +
       (note.length === 0

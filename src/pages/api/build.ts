@@ -12,6 +12,7 @@ import { SongInfo } from "../../components/FullChartPage";
 
 interface BuiltSongInfo extends SongInfo {
   bpm: number;
+  version: number;
   sections: number;
   maxScore: number;
   numLanes: number;
@@ -79,6 +80,7 @@ export default async function handler(
           maxScore: getMaxScore(chart, info.difficulty),
           numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
           type: info.type,
+          version: 2,
         };
 
         const zip = new JSZip();
