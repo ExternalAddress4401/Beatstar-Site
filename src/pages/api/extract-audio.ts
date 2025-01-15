@@ -72,6 +72,11 @@ async function extractAudio(uuid: string) {
       `tools/extractor/${fileName}`,
       [`./${uuid}/input/audio.bundle`, "-o", `./${uuid}/output`, "-q"],
       async function (a1, a2, a3) {
+        if (a1 || a2 || a3) {
+          console.log(a1);
+          console.log(a2);
+          console.log(a3);
+        }
         const file = (
           await fs.readdir(`./${uuid}/output/ExportedProject/Assets/TextAsset/`)
         ).filter((file) => file.endsWith(".bytes"))[0];
@@ -94,6 +99,11 @@ async function extractWem(uuid: string) {
       `tools/bnk/${fileName}`,
       ["-u", "-f", `./${uuid}/${file}`, "-o", `./${uuid}`],
       async function (a1, a2, a3) {
+        if (a1 || a2 || a3) {
+          console.log(a1);
+          console.log(a2);
+          console.log(a3);
+        }
         resolve();
       }
     );
@@ -107,6 +117,11 @@ async function convertAudio(uuid: string) {
       `tools/ww2ogg/${fileName}`,
       [`${uuid}/1.wem`, "--pcb", "packed_codebooks_aoTuV_603.bin"],
       function (a1, a2, a3) {
+        if (a1 || a2 || a3) {
+          console.log(a1);
+          console.log(a2);
+          console.log(a3);
+        }
         resolve();
       }
     );
