@@ -16,7 +16,9 @@ export default async function handler(
       : "socket-gateway.prod.robin.apelabs.net";
 
   const cms = (await CMSRequester.getCMS(ip)).filter(
-    (el) => el.name !== "LiveOpsDeeplinkRewardConfig"
+    (el) =>
+      el.name !== "LiveOpsDeeplinkRewardConfig" &&
+      el.name !== "NotificationConfig"
   );
 
   res.status(200).json({ cms: cms.slice(0, 12) });
