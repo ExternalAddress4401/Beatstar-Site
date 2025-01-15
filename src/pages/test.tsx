@@ -1,4 +1,4 @@
-import { useEffect, useState, createRef, useRef } from "react";
+/*import { useEffect, useState, createRef, useRef } from "react";
 import anime from "animejs";
 import cn from "classnames";
 
@@ -71,4 +71,4 @@ export default function Test() {
       <h1 className={cn(styles.title, styles.centered)}>BEATSTAR</h1>
     </div>
   );
-}
+}*/
