@@ -77,13 +77,30 @@ async function extractAudio(uuid: string) {
           console.log(a2);
           console.log(a3);
         }
-        const file = (
-          await fs.readdir(`./${uuid}/output/ExportedProject/Assets/TextAsset/`)
-        ).filter((file) => file.endsWith(".bytes"))[0];
-        await fs.rename(
-          `./${uuid}/output/ExportedProject/Assets/TextAsset/${file}`,
-          `./${uuid}/${file}.bnk`
-        );
+        let file;
+        try {
+          file = (
+            await fs.readdir(
+              `./${uuid}/output/ExportedProject/Assets/TextAsset/`
+            )
+          ).filter((file) => file.endsWith(".bytes"))[0];
+
+          await fs.rename(
+            `./${uuid}/output/ExportedProject/Assets/TextAsset/${file}`,
+            `./${uuid}/${file}.bnk`
+          );
+        } catch (e) {
+          file = (
+            await fs.readdir(
+              `./${uuid}/output/ExportedProject/Assets/audio/banks`
+            )
+          ).filter((file) => file.endsWith(".bytes"))[0];
+
+          await fs.rename(
+            `./${uuid}/output/ExportedProject/Assets/audio/banks/${file}`,
+            `./${uuid}/${file}.bnk`
+          );
+        }
         resolve();
       }
     );
