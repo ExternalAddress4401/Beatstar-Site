@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function useCache() {
+export function useCache(game?: "Beatstar" | "Countrystar") {
   const [assets, setAssets] = useState(null);
   const [songs, setSongs] = useState(null);
   const [language, setLanguage] = useState(null);
-  const bypassSessionStorage = false;
+  const bypassSessionStorage = true;
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!bypassSessionStorage && sessionStorage.getItem("cachedSongs")) {
+      if (
+        !bypassSessionStorage &&
+        sessionStorage.getItem("cachedSongs") &&
+        sessionStorage.getItem("game") == game
+      ) {
         setAssets(JSON.parse(sessionStorage.getItem("cachedAssets")));
         setSongs(JSON.parse(sessionStorage.getItem("cachedSongs")));
         setLanguage(JSON.parse(sessionStorage.getItem("cachedLanguage")));
@@ -17,16 +21,19 @@ export function useCache() {
         const assetsPatchConfig = (
           await axios.post("/api/read-cms-file", {
             name: "AssetsPatchConfig",
+            game,
           })
         ).data;
         const songConfig = (
           await axios.post("/api/read-cms-file", {
             name: "SongConfig",
+            game,
           })
         ).data;
         const langConfig = (
           await axios.post("/api/read-cms-file", {
             name: "LangConfig",
+            game,
           })
         ).data;
 
@@ -49,6 +56,8 @@ export function useCache() {
             artwork: assetsPatchConfig.assetBundles.find(
               (el) => el.id === artwork
             ),
+            downloadUrl: assetsPatchConfig.downloadUrl,
+            downloadBucketVersion: assetsPatchConfig.downloadBucketVersion,
           };
         });
 
@@ -58,10 +67,11 @@ export function useCache() {
         sessionStorage.setItem("cachedSongs", JSON.stringify(songConfig));
         sessionStorage.setItem("cachedAssets", JSON.stringify(assetsConfig));
         sessionStorage.setItem("cachedLanguage", JSON.stringify(langConfig));
+        sessionStorage.setItem("game", game);
       }
     };
     fetchData();
-  }, []);
+  }, [bypassSessionStorage, game]);
 
   return { assets, songs, language };
 }

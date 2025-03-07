@@ -1,6 +1,7 @@
 import Image from "next/image";
 import LocalLink from "./LocalLink";
 import styles from "./SongRow.module.scss";
+import { useCache } from "../hooks/useCache";
 
 interface SongRowProps {
   title: string;
@@ -13,6 +14,7 @@ interface SongRowProps {
   };
   audio: any;
   chart: any;
+  assets: any;
 }
 
 export default function SongRow({
@@ -26,6 +28,7 @@ export default function SongRow({
   },
   audio,
   chart,
+  assets,
 }: SongRowProps) {
   return (
     <div className={styles.container}>
@@ -46,13 +49,13 @@ export default function SongRow({
       <div className={styles.end}>
         <a
           className={styles.link}
-          href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/5/Android/${audio.id}_${audio.HashAndroid}${audio.CRCAndroid}.bundle`}
+          href={`${assets.downloadUrl}/${assets.downloadBucketVersion}/Android/${audio.id}_${audio.HashAndroid}${audio.CRCAndroid}.bundle`}
         >
           {audio.id === "unknown" ? "Unknown" : "Audio"}
         </a>
         <a
           className={styles.link}
-          href={`https://assets.flamingo.apelabs.net/flamingo-asset-bundles/prod/5/Android/${chart.id}_${chart.HashAndroid}${chart.CRCAndroid}.bundle`}
+          href={`${assets.downloadUrl}/${assets.downloadBucketVersion}/Android/${chart.id}_${chart.HashAndroid}${chart.CRCAndroid}.bundle`}
         >
           {chart.id === "unknown" ? "Unknown" : "Chart"}
         </a>

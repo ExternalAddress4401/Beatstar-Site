@@ -4,10 +4,12 @@ import Input from "../../components/Input";
 import { useCache } from "../../hooks/useCache";
 import BasicLoader from "../../components/BasicLoader";
 import SongRow from "../../components/SongRow";
+import Tabs from "../../components/Tabs";
 
 export default function Songs() {
-  const { assets, songs, language } = useCache();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [game, setGame] = useState<"Beatstar" | "Countrystar">("Beatstar");
+  const { assets, songs, language } = useCache(game);
 
   if (!assets || !songs) {
     return (
@@ -19,6 +21,11 @@ export default function Songs() {
   return (
     <div className={styles.content}>
       <h1>Songs</h1>
+      <Tabs
+        options={["Beatstar", "Countrystar"]}
+        selected={game}
+        onSelect={(value) => setGame(value as "Beatstar" | "Countrystar")}
+      />
       <Input
         type="text"
         label="Search"
@@ -50,6 +57,10 @@ export default function Songs() {
             width: 0,
             height: 0,
           };
+
+          if (!beatmapInfo) {
+            return null;
+          }
 
           const pro = beatmapInfo.Description
             ? beatmapInfo.Description.toLowerCase().includes("pro")
@@ -87,6 +98,7 @@ export default function Songs() {
               difficulty={difficulty}
               audio={audio}
               chart={chart}
+              assets={assets[0]}
             />
           );
         })}
