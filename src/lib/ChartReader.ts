@@ -94,6 +94,7 @@ function handleEvents(chart: Chart, block: string[]) {
   const eventsBlock = block.map((el) => eventRegex.exec(el));
 
   for (const event of eventsBlock) {
+    console.log(event);
     const [_, offset, name] = event;
     if (name === "section") {
       const o = parseInt(offset);
@@ -301,7 +302,7 @@ export function readBytes(json: any) {
     })
   );
 
-  const directions: Direction[] = ["u", "d", "l", "r", "ul", "ur", "dl", "dr"];
+  const directions: Direction[] = ["u", "d", "l", "r", "ul", "ur", "dr", "dl"];
 
   for (const note of json.notes) {
     if (note.lane) {
