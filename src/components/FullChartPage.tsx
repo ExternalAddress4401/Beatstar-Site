@@ -19,7 +19,18 @@ export interface SongInfo {
   id: number;
   difficulty: number;
   type: string;
+  genre: Genre;
 }
+
+type Genre =
+  | "alternative"
+  | "country"
+  | "dance"
+  | "hip-hop"
+  | "latest-hits"
+  | "pop"
+  | "r&b"
+  | "rock";
 
 interface FullChartProps {
   onLoad: (value: boolean) => void;
@@ -41,6 +52,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
     id: getRandomBetween(2000, 10000),
     difficulty: 1,
     type: "Regular",
+    genre: "rock",
   });
   const [legacyRails, setLegacyRails] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[] | null>(null);
@@ -82,6 +94,11 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
           ...info,
           type: e.currentTarget.checked ? "Promode" : "Regular",
         });
+      case "genre":
+        setInfo({
+          ...info,
+          genre: e.currentTarget.value.toLowerCase().replace(" ", "-") as Genre,
+        });
     }
   };
 
@@ -93,7 +110,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
 
   const openFileDialog = (
     type: "chart" | "audio" | "artwork",
-    filter: string
+    filter: string,
   ) => {
     let input = document.createElement("input");
     input.type = "file";
@@ -118,7 +135,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
         case "audio":
           const audioData = (await readFile(
             file,
-            "arraybuffer"
+            "arraybuffer",
           )) as ArrayBuffer;
           setAudio({
             name: file.name,
@@ -130,7 +147,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
         case "artwork":
           const artworkData = (await readFile(
             file,
-            "arraybuffer"
+            "arraybuffer",
           )) as ArrayBuffer;
           if (!isPng(new Uint8Array(artworkData))) {
             setErrors(["This isn't a PNG. Please supply a valid PNG file."]);
@@ -201,7 +218,27 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
           value={info.id}
           onChange={onInfoChange}
         />
-        <Select label="Difficulty" onChange={onInfoChange} />
+        <Select
+          label="Difficulty"
+          defaultValue="Extreme"
+          options={["Extreme", "Hard", "Normal"]}
+          onChange={onInfoChange}
+        />
+        <Select
+          label="Genre"
+          defaultValue="Rock"
+          options={[
+            "Alternative",
+            "Country",
+            "Dance",
+            "Hip-Hop",
+            "Latest Hits",
+            "Pop",
+            "R&B",
+            "Rock",
+          ]}
+          onChange={onInfoChange}
+        />
         <Checkbox label="Deluxe" onChange={onInfoChange} />
         <Checkbox label="Use legacy rail notes" onChange={setLegacyRails} />
       </div>

@@ -12,7 +12,7 @@ export default async function handler(
 
   const ip =
     req.body.game === "Beatstar"
-      ? "socket-gateway.prod.flamingo.apelabs.net"
+      ? "beatstarmod.app"
       : "socket-gateway.prod.robin.apelabs.net";
 
   const cms = (await CMSRequester.getCMS(ip)).filter(

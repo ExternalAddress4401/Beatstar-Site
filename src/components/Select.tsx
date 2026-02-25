@@ -2,10 +2,17 @@ import styles from "./Select.module.scss";
 
 interface SelectProps {
   label: string;
+  defaultValue: string;
+  options: string[];
   onChange: (e) => void;
 }
 
-export default function Select({ label, onChange }: SelectProps) {
+export default function Select({
+  label,
+  defaultValue,
+  options,
+  onChange,
+}: SelectProps) {
   return (
     <div className={styles.container}>
       <label className={styles.label}>{label}</label>
@@ -13,10 +20,11 @@ export default function Select({ label, onChange }: SelectProps) {
         className={styles.select}
         name={label.toLowerCase()}
         onChange={onChange}
+        defaultValue={defaultValue}
       >
-        <option>Extreme</option>
-        <option>Hard</option>
-        <option>Normal</option>
+        {options.map((opt) => (
+          <option key={opt}>{opt}</option>
+        ))}
       </select>
     </div>
   );

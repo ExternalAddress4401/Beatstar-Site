@@ -26,7 +26,7 @@ export const config = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const form = formidable();
 
@@ -48,7 +48,7 @@ export default async function handler(
     //yes these need to be their own folders because of how the asset replacer works
     await fs.rename(
       files.artwork.filepath,
-      `./${uuid}/artwork/FooFighter_Everlong.png`
+      `./${uuid}/artwork/FooFighter_Everlong.png`,
     );
 
     await fs.rename(files.audio.filepath, `./${uuid}/audio/bnk/1.wem`);
@@ -59,7 +59,7 @@ export default async function handler(
 
     const numLanes = chart.notes.reduce(
       (prev, curr) => (curr.lane > prev ? curr.lane : prev),
-      0
+      0,
     );
 
     const promises = [
@@ -81,12 +81,13 @@ export default async function handler(
           numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
           type: info.type,
           version: 2,
+          genre: info.genre,
         };
 
         const zip = new JSZip();
         zip.file(
           "artwork.bundle",
-          await fs.readFile(`./${uuid}/artwork.bundle`)
+          await fs.readFile(`./${uuid}/artwork.bundle`),
         );
         zip.file("audio.bundle", await fs.readFile(`./${uuid}/audio.bundle`));
         zip.file("chart.bundle", await fs.readFile(`./${uuid}/chart.bundle`));
@@ -121,7 +122,7 @@ export default async function handler(
 
 function parseForm(
   form: any,
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
@@ -139,11 +140,11 @@ function parseForm(
 async function parseChart(
   uuid: string,
   difficulty: number,
-  useLegacyRails: boolean
+  useLegacyRails: boolean,
 ) {
   const chart = readChart(
     (await fs.readFile(`./${uuid}/chart/508`)).toString(),
-    useLegacyRails
+    useLegacyRails,
   );
 
   // for now we'll add in the default speeds and perfect sizes here
@@ -244,13 +245,13 @@ async function replaceChart(uuid: string) {
       ],
       async function (a1, a2, a3) {
         let data = (await fs.readFile(`./${uuid}/chart.bundle`)).toString(
-          "binary"
+          "binary",
         );
         data = data.replace(container, newContainerName);
         await fs.writeFile(`./${uuid}/chart.bundle`, data, "binary");
 
         resolve();
-      }
+      },
     );
   });
 }
@@ -277,13 +278,13 @@ async function replaceArtwork(uuid: string) {
       ],
       async function (a1, a2, a3) {
         let data = (await fs.readFile(`./${uuid}/artwork.bundle`)).toString(
-          "binary"
+          "binary",
         );
         data = data.replace(container, newContainerName);
         await fs.writeFile(`./${uuid}/artwork.bundle`, data, "binary");
 
         resolve();
-      }
+      },
     );
   });
 }
@@ -328,15 +329,15 @@ async function replaceAudio(uuid: string) {
           ],
           async function (a1, a2, a3) {
             let data = (await fs.readFile(`./${uuid}/audio.bundle`)).toString(
-              "binary"
+              "binary",
             );
             data = data.replace(container, newContainerName);
             await fs.writeFile(`./${uuid}/audio.bundle`, data, "binary");
 
             resolve();
-          }
+          },
         );
-      }
+      },
     );
   });
 }

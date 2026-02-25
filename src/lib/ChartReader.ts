@@ -11,12 +11,12 @@ import { effects } from "./Effects";
 function validateChart(chart: Chart) {
   if (!chart.sections.length) {
     chart.errors.push(
-      "Your chart has no sections. Add at least one in Moonscraper."
+      "Your chart has no sections. Add at least one in Moonscraper.",
     );
   }
   if (chart.sections.length > 5) {
     chart.errors.push(
-      "Your chart has too many sections. Only 5 sections are supported."
+      "Your chart has too many sections. Only 5 sections are supported.",
     );
   }
 }
@@ -59,7 +59,7 @@ export function readChart(file: string, useLegacyRails: boolean) {
 
 function findResolution(chart: Chart, block: string[]) {
   const resolution = parseInt(
-    block.find((el) => el.startsWith("Resolution")).split(" = ")[1]
+    block.find((el) => el.startsWith("Resolution")).split(" = ")[1],
   );
   if (!resolution || Number.isNaN(resolution)) {
     chart.errors.push("Couldn't get the resolution for this chart.");
@@ -103,12 +103,12 @@ function handleEvents(chart: Chart, block: string[]) {
       const effect = effects.find((el) => el.idLabel === name);
       if (!effect) {
         chart.errors.push(
-          `Found an effect ${name} at offset ${offset} that doesn't exist.`
+          `Found an effect ${name} at offset ${offset} that doesn't exist.`,
         );
         continue;
       }
       const effectsAtOffset = chartEffects.find(
-        (el) => el.offset === parseInt(offset)
+        (el) => el.offset === parseInt(offset),
       );
       if (!effectsAtOffset) {
         const o = parseInt(offset);
@@ -196,7 +196,7 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
           const size = parseInt(event.slice(1));
           if (size !== 1 && size !== 2) {
             chart.errors.push(
-              `Invalid size ${size} given at offset ${offset}. Sizes must be 1 or 2.`
+              `Invalid size ${size} given at offset ${offset}. Sizes must be 1 or 2.`,
             );
             continue;
           }
@@ -207,7 +207,7 @@ function handleNotes(chart: Chart, block: string[], useLegacyRails: boolean) {
         arr.push({
           offset: parseInt(offset),
           multiplier: parseFloat(
-            insertAt(event.slice(1), ".", event.slice(1).length - 2)
+            insertAt(event.slice(1), ".", event.slice(1).length - 2),
           ),
           adjustedOffset: parseInt(offset),
         });
@@ -275,7 +275,7 @@ export function readBytes(json: any) {
   chart.setBpms([]);
   chart.setNotes([]);
   chart.setSections(
-    json.sections.map((section) => Math.round(section.offset * resolution))
+    json.sections.map((section) => Math.round(section.offset * resolution)),
   );
   chart.setPerfectSizes(
     json.perfectSizes.map((size: Size) => {
@@ -283,7 +283,7 @@ export function readBytes(json: any) {
         offset: size.offset ? Math.round(size.offset * resolution) : 0,
         multiplier: size.multiplier,
       };
-    })
+    }),
   );
   chart.setSpeeds(
     json.speeds.map((speed: Size) => {
@@ -291,7 +291,7 @@ export function readBytes(json: any) {
         offset: speed.offset ? Math.round(speed.offset * resolution) : 0,
         multiplier: speed.multiplier,
       };
-    })
+    }),
   );
   chart.setEffects(
     json.effects.map((effect: Effect) => {
@@ -299,7 +299,7 @@ export function readBytes(json: any) {
         offset: effect.offset ? Math.round(effect.offset * resolution) : 0,
         effects: effect.effects,
       };
-    })
+    }),
   );
 
   const directions: Direction[] = ["u", "d", "l", "r", "ul", "ur", "dr", "dl"];
@@ -331,7 +331,7 @@ export function readBytes(json: any) {
       const offset = Math.round(note.long.note[0].offset * resolution);
       const lane = note.long.note[0].lane;
       const length = Math.round(
-        (note.long.note[1].offset - note.long.note[0].offset) * resolution
+        (note.long.note[1].offset - note.long.note[0].offset) * resolution,
       );
 
       chart.notes.push({
@@ -343,11 +343,11 @@ export function readBytes(json: any) {
       });
     } else if (note.note_type === 5) {
       const startOffset = Math.round(
-        note.note.switchHold[0].offset * resolution
+        note.note.switchHold[0].offset * resolution,
       );
       const endOffset = Math.round(
         note.note.switchHold[note.note.switchHold.length - 1].offset *
-          resolution
+          resolution,
       );
       const lane = note.note.switchHold[0].lane;
 
