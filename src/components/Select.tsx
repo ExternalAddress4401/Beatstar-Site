@@ -2,8 +2,8 @@ import styles from "./Select.module.scss";
 
 interface SelectProps {
   label: string;
-  defaultValue: string;
-  options: string[];
+  defaultValue?: string;
+  options?: string[];
   onChange: (e) => void;
 }
 
