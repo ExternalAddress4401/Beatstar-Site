@@ -19,7 +19,7 @@ export interface SongInfo {
   id: number;
   difficulty: number;
   type: string;
-  genre: Genre;
+  //genre: Genre;
 }
 
 type Genre =
@@ -52,7 +52,7 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
     id: getRandomBetween(2000, 10000),
     difficulty: 1,
     type: "Regular",
-    genre: "rock",
+    //genre: "rock",
   });
   const [legacyRails, setLegacyRails] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[] | null>(null);
@@ -95,10 +95,10 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
           type: e.currentTarget.checked ? "Promode" : "Regular",
         });
       case "genre":
-        setInfo({
+      /*setInfo({
           ...info,
           genre: e.currentTarget.value.toLowerCase().replace(" ", "-") as Genre,
-        });
+        });*/
     }
   };
 
