@@ -126,6 +126,7 @@ export default function SingleFilePage({ onLoad }: SingleFilePageProps) {
     <div className={styles.content}>
       <Select
         label="Difficulty"
+        options={Object.keys(difficulties)}
         onChange={(e) => setDifficulty(difficulties[e.target.value])}
       />
       <Button
