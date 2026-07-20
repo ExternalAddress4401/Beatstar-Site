@@ -224,21 +224,23 @@ export default function FullChartPage({ onLoad }: FullChartProps) {
           options={["Extreme", "Hard", "Normal"]}
           onChange={onInfoChange}
         />
-        <Select
-          label="Genre"
-          defaultValue="Rock"
-          options={[
-            "Alternative",
-            "Country",
-            "Dance",
-            "Hip-Hop",
-            "Latest Hits",
-            "Pop",
-            "R&B",
-            "Rock",
-          ]}
-          onChange={onInfoChange}
-        />
+        {false && (
+          <Select
+            label="Genre"
+            defaultValue="Rock"
+            options={[
+              "Alternative",
+              "Country",
+              "Dance",
+              "Hip-Hop",
+              "Latest Hits",
+              "Pop",
+              "R&B",
+              "Rock",
+            ]}
+            onChange={onInfoChange}
+          />
+        )}
         <Checkbox label="Deluxe" onChange={onInfoChange} />
         <Checkbox label="Use legacy rail notes" onChange={setLegacyRails} />
       </div>

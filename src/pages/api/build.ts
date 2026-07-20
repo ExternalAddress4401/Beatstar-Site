@@ -28,7 +28,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const form = formidable();
+  const form = formidable({
+    maxFileSize: 2097277130,
+  });
 
   const { files, fields } = await parseForm(form, req);
   const info = JSON.parse(fields.info);
@@ -81,7 +83,7 @@ export default async function handler(
           numLanes: numLanes % 2 === 0 ? numLanes + 1 : numLanes,
           type: info.type,
           version: 2,
-          genre: info.genre,
+          //genre: info.genre,
         };
 
         const zip = new JSZip();

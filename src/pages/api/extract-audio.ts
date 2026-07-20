@@ -14,9 +14,11 @@ export const config = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const form = formidable();
+  const form = formidable({
+    maxFileSize: 2097277130,
+  });
 
   const { files, fields } = await parseForm(form, req);
 
@@ -47,7 +49,7 @@ export default async function handler(
 
 function parseForm(
   form: any,
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
@@ -81,35 +83,35 @@ async function extractAudio(uuid: string) {
         try {
           file = (
             await fs.readdir(
-              `./${uuid}/output/ExportedProject/Assets/TextAsset/`
+              `./${uuid}/output/ExportedProject/Assets/TextAsset/`,
             )
           ).filter((file) => file.endsWith(".bytes"))[0];
 
           await fs.rename(
             `./${uuid}/output/ExportedProject/Assets/TextAsset/${file}`,
-            `./${uuid}/${file}.bnk`
+            `./${uuid}/${file}.bnk`,
           );
         } catch (e) {
           file = (
             await fs.readdir(
-              `./${uuid}/output/ExportedProject/Assets/audio/banks`
+              `./${uuid}/output/ExportedProject/Assets/audio/banks`,
             )
           ).filter((file) => file.endsWith(".bytes"))[0];
 
           await fs.rename(
             `./${uuid}/output/ExportedProject/Assets/audio/banks/${file}`,
-            `./${uuid}/${file}.bnk`
+            `./${uuid}/${file}.bnk`,
           );
         }
         resolve();
-      }
+      },
     );
   });
 }
 async function extractWem(uuid: string) {
   const fileName = process.platform === "linux" ? "wwiseutil" : "wwiseutil.exe";
   const file = (await fs.readdir(`./${uuid}`)).filter((file) =>
-    file.endsWith(".bnk")
+    file.endsWith(".bnk"),
   )[0];
   return new Promise<void>(function (resolve, reject) {
     execFile(
@@ -122,7 +124,7 @@ async function extractWem(uuid: string) {
           console.log(a3);
         }
         resolve();
-      }
+      },
     );
   });
 }
@@ -140,7 +142,7 @@ async function convertAudio(uuid: string) {
           console.log(a3);
         }
         resolve();
-      }
+      },
     );
   });
 }

@@ -38,3 +38,5 @@ next-env.d.ts
 notes.txt
 
 tools/extractor/windows/AssetRipper.log
+
+protobuf

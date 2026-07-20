@@ -16,9 +16,11 @@ export const config = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const form = formidable();
+  const form = formidable({
+    maxFileSize: 2097277130,
+  });
 
   const { files, fields } = await parseForm(form, req);
   const legacyRails = fields.legacyRails === "true" ? true : false;
@@ -38,7 +40,7 @@ export default async function handler(
 
     if (files.chart.originalFilename.endsWith(".json")) {
       const chart = JSON.parse(
-        (await fs.readFile(`./${uuid}/chart/508`)).toString()
+        (await fs.readFile(`./${uuid}/chart/508`)).toString(),
       );
       const writer = new ProtobufWriter(chart);
       writer.build(ChartProto);
@@ -84,7 +86,7 @@ export default async function handler(
 
 function parseForm(
   form: any,
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
@@ -128,13 +130,13 @@ async function replaceChart(uuid: string) {
       async function (a1, a2, a3) {
         console.log(a1, a2, a3);
         let data = (await fs.readFile(`./${uuid}/chart.bundle`)).toString(
-          "binary"
+          "binary",
         );
         data = data.replace(container, newContainerName);
         await fs.writeFile(`./${uuid}/chart.bundle`, data, "binary");
 
         resolve();
-      }
+      },
     );
   });
 }
@@ -142,11 +144,11 @@ async function replaceChart(uuid: string) {
 async function parseChart(
   uuid: string,
   difficulty: number,
-  useLegacyRails: boolean
+  useLegacyRails: boolean,
 ) {
   const chart = readChart(
     (await fs.readFile(`./${uuid}/chart/508`)).toString(),
-    useLegacyRails
+    useLegacyRails,
   );
 
   // for now we'll add in the default speeds and perfect sizes here

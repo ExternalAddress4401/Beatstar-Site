@@ -14,9 +14,11 @@ export const config = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const form = formidable();
+  const form = formidable({
+    maxFileSize: 2097277130,
+  });
 
   const { files, fields } = await parseForm(form, req);
 
@@ -45,18 +47,18 @@ export default async function handler(
         `./${uuid}/output/ExportedProject/Assets/TextAsset/` +
           (
             await fs.readdir(
-              `./${uuid}/output/ExportedProject/Assets/TextAsset`
+              `./${uuid}/output/ExportedProject/Assets/TextAsset`,
             )
-          ).filter((file) => file.endsWith(".bytes"))[0]
+          ).filter((file) => file.endsWith(".bytes"))[0],
       );
     } catch (e) {
       data = await fs.readFile(
         `./${uuid}/output/ExportedProject/Assets/beatmapinteractions/` +
           (
             await fs.readdir(
-              `./${uuid}/output/ExportedProject/Assets/beatmapinteractions`
+              `./${uuid}/output/ExportedProject/Assets/beatmapinteractions`,
             )
-          ).filter((file) => file.endsWith(".bytes"))[0]
+          ).filter((file) => file.endsWith(".bytes"))[0],
       );
     }
   }
@@ -74,7 +76,7 @@ export default async function handler(
 
 function parseForm(
   form: any,
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
@@ -100,7 +102,7 @@ async function extractChart(uuid: string) {
       [`./${uuid}/input/chart.bundle`, "-o", `./${uuid}/output`, "-q"],
       async function (a1, a2, a3) {
         resolve();
-      }
+      },
     );
   });
 }

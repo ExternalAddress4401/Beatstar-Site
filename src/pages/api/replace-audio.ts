@@ -13,9 +13,11 @@ export const config = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const form = formidable();
+  const form = formidable({
+    maxFileSize: 2097277130,
+  });
 
   const { files } = await parseForm(form, req);
 
@@ -68,7 +70,7 @@ export default async function handler(
 
 function parseForm(
   form: any,
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
@@ -130,15 +132,15 @@ async function replaceAudio(uuid: string) {
           ],
           async function (a1, a2, a3) {
             let data = (await fs.readFile(`./${uuid}/audio.bundle`)).toString(
-              "binary"
+              "binary",
             );
             data = data.replace(container, newContainerName);
             await fs.writeFile(`./${uuid}/audio.bundle`, data, "binary");
 
             resolve();
-          }
+          },
         );
-      }
+      },
     );
   });
 }

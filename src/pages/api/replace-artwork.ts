@@ -13,9 +13,11 @@ export const config = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  const form = formidable();
+  const form = formidable({
+    maxFileSize: 2097277130,
+  });
 
   const { files } = await parseForm(form, req);
 
@@ -32,7 +34,7 @@ export default async function handler(
     //yes these need to be their own folders because of how the asset replacer works
     await fs.rename(
       files.artwork.filepath,
-      `./${uuid}/artwork/FooFighter_Everlong.png`
+      `./${uuid}/artwork/FooFighter_Everlong.png`,
     );
 
     const promises = [replaceArtwork(uuid)];
@@ -42,7 +44,7 @@ export default async function handler(
         const zip = new JSZip();
         zip.file(
           "artwork.bundle",
-          await fs.readFile(`./${uuid}/artwork.bundle`)
+          await fs.readFile(`./${uuid}/artwork.bundle`),
         );
 
         zip
@@ -74,7 +76,7 @@ export default async function handler(
 
 function parseForm(
   form: any,
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<{ files: any; fields: any }> {
   return new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
@@ -116,13 +118,13 @@ async function replaceArtwork(uuid: string) {
       ],
       async function (a1, a2, a3) {
         let data = (await fs.readFile(`./${uuid}/artwork.bundle`)).toString(
-          "binary"
+          "binary",
         );
         data = data.replace(container, newContainerName);
         await fs.writeFile(`./${uuid}/artwork.bundle`, data, "binary");
 
         resolve();
-      }
+      },
     );
   });
 }
